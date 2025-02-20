@@ -40,20 +40,36 @@
         h1 {
             text-align: center;
         }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
     <h1>Live Blog Editor</h1>
     <textarea id="editor" placeholder="Write your blog post here..."></textarea>
-    <h2>Live Preview</h2>
+    <button id="postButton">Post</button>
+    <h2>Published Post</h2>
     <div id="liveDisplay"></div>
     
     <script>
         const editor = document.getElementById('editor');
         const liveDisplay = document.getElementById('liveDisplay');
+        const postButton = document.getElementById('postButton');
         
-        editor.addEventListener('input', function() {
+        postButton.addEventListener('click', function() {
             liveDisplay.innerHTML = editor.value.replace(/\n/g, '<br>');
+            editor.value = "";
         });
     </script>
 </body>
