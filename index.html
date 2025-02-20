@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Text Board</title>
+    <title>Live Text Editor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,37 +15,40 @@
             background-color: #f4f4f4;
             margin: 0;
         }
-        #inputArea {
+        #editor {
             width: 80%;
+            height: 200px;
             padding: 10px;
             font-size: 18px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            resize: none;
         }
         #liveDisplay {
             margin-top: 20px;
             width: 80%;
-            min-height: 50px;
+            min-height: 200px;
             padding: 10px;
             font-size: 20px;
             border: 1px solid #000;
             background: white;
             border-radius: 5px;
             word-wrap: break-word;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
-    <h2>Live Text Board</h2>
-    <textarea id="inputArea" placeholder="Type something..."></textarea>
+    <h2>Live Text Editor</h2>
+    <textarea id="editor" placeholder="Start typing..."></textarea>
     <div id="liveDisplay"></div>
     
     <script>
-        const inputArea = document.getElementById('inputArea');
+        const editor = document.getElementById('editor');
         const liveDisplay = document.getElementById('liveDisplay');
         
-        inputArea.addEventListener('input', function() {
-            liveDisplay.textContent = inputArea.value;
+        editor.addEventListener('input', function() {
+            liveDisplay.textContent = editor.value;
         });
     </script>
 </body>
