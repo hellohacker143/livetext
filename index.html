@@ -17,13 +17,19 @@
             margin: 0;
             padding: 20px;
         }
-        #urlInput {
+        #inputFields {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 80%;
+        }
+        input {
             width: 80%;
             padding: 10px;
             font-size: 18px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-bottom: 10px;
         }
         button {
             padding: 10px 20px;
@@ -47,23 +53,36 @@
 </head>
 <body>
     <h1>QR Code Generator</h1>
-    <input type="text" id="urlInput" placeholder="Enter URL here...">
-    <button id="generateBtn">Generate QR Code</button>
+    <div id="inputFields">
+        <input type="text" id="urlInput" placeholder="Enter URL here...">
+        <input type="text" id="phoneInput" placeholder="Enter phone number for WhatsApp">
+        <button id="generateBtn">Generate QR Code</button>
+    </div>
     <div id="qrcode"></div>
     <button id="downloadBtn" style="display:none; margin-top: 10px;">Download QR Code</button>
     
     <script>
         const generateBtn = document.getElementById('generateBtn');
         const urlInput = document.getElementById('urlInput');
+        const phoneInput = document.getElementById('phoneInput');
         const qrcodeDiv = document.getElementById('qrcode');
         const downloadBtn = document.getElementById('downloadBtn');
         
         generateBtn.addEventListener('click', function() {
             qrcodeDiv.innerHTML = "";
+            let qrText = "";
             const url = urlInput.value.trim();
-            if (url) {
-                const qr = new QRCode(qrcodeDiv, {
-                    text: url,
+            const phone = phoneInput.value.trim();
+            
+            if (phone) {
+                qrText = `https://wa.me/${phone}`;
+            } else if (url) {
+                qrText = url;
+            }
+            
+            if (qrText) {
+                new QRCode(qrcodeDiv, {
+                    text: qrText,
                     width: 200,
                     height: 200
                 });
