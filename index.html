@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Text Editor</title>
+    <title>Live Blog Editor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             background-color: #f4f4f4;
             margin: 0;
+            padding: 20px;
         }
         #editor {
             width: 80%;
@@ -36,11 +37,15 @@
             word-wrap: break-word;
             white-space: pre-wrap;
         }
+        h1 {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h2>Live Text Editor</h2>
-    <textarea id="editor" placeholder="Start typing..."></textarea>
+    <h1>Live Blog Editor</h1>
+    <textarea id="editor" placeholder="Write your blog post here..."></textarea>
+    <h2>Live Preview</h2>
     <div id="liveDisplay"></div>
     
     <script>
@@ -48,7 +53,7 @@
         const liveDisplay = document.getElementById('liveDisplay');
         
         editor.addEventListener('input', function() {
-            liveDisplay.textContent = editor.value;
+            liveDisplay.innerHTML = editor.value.replace(/\n/g, '<br>');
         });
     </script>
 </body>
