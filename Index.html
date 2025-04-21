@@ -23,12 +23,16 @@
         #progressBar {
             height: 30px;
             width: 0;
-            background-color: #4caf50;
+            background-color: green;
             border-radius: 8px;
         }
         #chargingMode {
             margin-top: 20px;
             font-size: 20px;
+        }
+        #timeRemaining {
+            margin-top: 20px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -39,6 +43,7 @@
         <div id="progressBar"></div>
     </div>
     <div id="chargingMode"></div>
+    <div id="timeRemaining"></div>
 
     <script>
         // Function to update the live charging status
@@ -46,6 +51,7 @@
             const statusElement = document.getElementById('chargingStatus');
             const progressBar = document.getElementById('progressBar');
             const chargingMode = document.getElementById('chargingMode');
+            const timeRemainingElement = document.getElementById('timeRemaining');
             
             // Update the charging percentage
             let percentage = Math.floor(battery.level * 100);
@@ -54,14 +60,31 @@
             // Update the progress bar
             progressBar.style.width = percentage + "%";
 
-            // Update charging mode
-            if (battery.charging) {
-                chargingMode.innerText = "Charging... (Plugged in)";
+            // Change the progress bar color based on the percentage
+            if (percentage < 20) {
+                progressBar.style.backgroundColor = 'red'; // Low battery - Red
+            } else if (percentage < 50) {
+                progressBar.style.backgroundColor = 'yellow'; // Medium battery - Yellow
             } else {
-                chargingMode.innerText = "Not Charging";
+                progressBar.style.backgroundColor = 'green'; // High battery - Green
             }
 
-            // Trigger vibration when charging is complete (100%)
+            // Update charging mode (Charging or Not Charging)
+            if (battery.charging) {
+                chargingMode.innerText = "Charging... (Plugged in)";
+                let chargingTime = battery.chargingTime;
+                let hours = Math.floor(chargingTime / 3600);
+                let minutes = Math.floor((chargingTime % 3600) / 60);
+                timeRemainingElement.innerText = `Charging Time Left: ${hours}h ${minutes}m`;
+            } else {
+                chargingMode.innerText = "Not Charging";
+                let dischargingTime = battery.dischargingTime;
+                let hours = Math.floor(dischargingTime / 3600);
+                let minutes = Math.floor((dischargingTime % 3600) / 60);
+                timeRemainingElement.innerText = `Discharging Time Left: ${hours}h ${minutes}m`;
+            }
+
+            // Trigger vibration and update when fully charged (100%)
             if (percentage === 100) {
                 if ("vibrate" in navigator) {
                     navigator.vibrate(500); // Vibrate for 500 milliseconds
