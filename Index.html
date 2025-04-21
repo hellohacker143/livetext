@@ -9,7 +9,8 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
-            transition: background 0.5s, color 0.5s;
+            background-color: #f3f3f3;
+            transition: background-color 0.5s ease;
         }
         #chargingStatus {
             font-size: 24px;
@@ -41,24 +42,18 @@
             max-height: 150px;
             overflow-y: scroll;
         }
-        /* Light Theme */
-        .light-theme {
-            background-color: #ffffff;
-            color: #000000;
+        #themeSelector, #soundControl, #vibrationControl {
+            margin-top: 20px;
         }
-        /* Dark Theme */
-        .dark-theme {
-            background-color: #2e2e2e;
-            color: #ffffff;
+        #soundControl input {
+            width: 80%;
         }
-        /* Custom Background */
-        .custom-background {
-            background-size: cover;
-            background-position: center;
+        #volumeLevel {
+            margin-top: 10px;
         }
     </style>
 </head>
-<body class="light-theme">
+<body>
     <h1>Live Mobile Charging Status</h1>
     <div id="chargingStatus">Battery Status: 0%</div>
     <div id="chargingProgress">
@@ -70,24 +65,26 @@
     <div id="batteryEfficiency"></div>
     <div id="chargingHistory"></div>
 
-    <!-- Theme Selection Dropdown -->
-    <div>
-        <label for="themeSelect">Select Theme: </label>
-        <select id="themeSelect" onchange="changeTheme()">
-            <option value="light">Light Mode</option>
-            <option value="dark">Dark Mode</option>
-            <option value="custom">Custom Background</option>
-        </select>
+    <div id="themeSelector">
+        <button onclick="changeTheme('light')">Light Theme</button>
+        <button onclick="changeTheme('dark')">Dark Theme</button>
     </div>
 
-    <!-- Custom Background URL Input -->
-    <div id="customBackgroundInput" style="display: none;">
-        <label for="bgUrl">Enter Background Image URL: </label>
-        <input type="text" id="bgUrl" placeholder="Enter URL for background image" oninput="applyCustomBackground()" />
+    <div id="soundControl">
+        <label for="volume">Alert Sound Volume: </label>
+        <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5" onchange="updateVolume()">
+        <div id="volumeLevel">Volume: 50%</div>
+    </div>
+
+    <div id="vibrationControl">
+        <button onclick="toggleVibration()">Toggle Vibration</button>
+        <p id="vibrationStatus">Vibration is On</p>
     </div>
 
     <script>
         let chargingHistory = [];
+        let soundVolume = 0.5;  // Default sound volume (range: 0 to 1)
+        let vibrationEnabled = true; // Default vibration is enabled
 
         // Function to update live charging status
         function updateBatteryStatus(battery) {
@@ -144,7 +141,7 @@
 
             // Trigger alert and vibration when battery reaches 100%
             if (percentage === 100) {
-                if ("vibrate" in navigator) {
+                if (vibrationEnabled && "vibrate" in navigator) {
                     navigator.vibrate(500); // Vibrate for 500 milliseconds
                 }
                 playAudioAlert(); // Play audio alert
@@ -160,9 +157,10 @@
             logChargingHistory(battery);
         }
 
-        // Function to play audio alert
+        // Function to play audio alert with adjustable volume
         function playAudioAlert() {
             let audio = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Example beep sound
+            audio.volume = soundVolume;  // Set the volume based on the slider
             audio.play();
         }
 
@@ -178,6 +176,30 @@
         function updateChargingHistory() {
             const chargingHistoryElement = document.getElementById('chargingHistory');
             chargingHistoryElement.innerHTML = chargingHistory.join('<br>');
+        }
+
+        // Function to change background theme
+        function changeTheme(theme) {
+            if (theme === 'dark') {
+                document.body.style.backgroundColor = '#333';
+                document.body.style.color = '#fff';
+            } else {
+                document.body.style.backgroundColor = '#f3f3f3';
+                document.body.style.color = '#000';
+            }
+        }
+
+        // Function to update sound volume
+        function updateVolume() {
+            soundVolume = document.getElementById('volume').value;
+            document.getElementById('volumeLevel').innerText = `Volume: ${Math.floor(soundVolume * 100)}%`;
+        }
+
+        // Function to toggle vibration
+        function toggleVibration() {
+            vibrationEnabled = !vibrationEnabled;
+            const vibrationStatus = document.getElementById('vibrationStatus');
+            vibrationStatus.innerText = vibrationEnabled ? "Vibration is On" : "Vibration is Off";
         }
 
         // Fetch battery status
@@ -198,32 +220,6 @@
             } else {
                 alert("Battery Status API is not supported on this device.");
             }
-        }
-
-        // Function to change themes
-        function changeTheme() {
-            const themeSelect = document.getElementById("themeSelect").value;
-            const body = document.body;
-
-            // Reset theme and background styles
-            body.classList.remove("light-theme", "dark-theme", "custom-background");
-            body.style.backgroundImage = "";
-
-            // Apply selected theme
-            if (themeSelect === "light") {
-                body.classList.add("light-theme");
-            } else if (themeSelect === "dark") {
-                body.classList.add("dark-theme");
-            } else {
-                body.classList.add("custom-background");
-                document.getElementById("customBackgroundInput").style.display = "block"; // Show custom background input
-            }
-        }
-
-        // Apply custom background
-        function applyCustomBackground() {
-            const bgUrl = document.getElementById("bgUrl").value;
-            document.body.style.backgroundImage = `url('${bgUrl}')`;
         }
 
         // Call the function to get battery status
