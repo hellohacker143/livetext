@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
+            transition: background 0.5s, color 0.5s;
         }
         #chargingStatus {
             font-size: 24px;
@@ -30,13 +31,34 @@
             margin-top: 20px;
             font-size: 20px;
         }
-        #timeRemaining, #batteryHealth {
+        #timeRemaining, #batteryHealth, #batteryEfficiency, #batteryHistory {
             margin-top: 20px;
             font-size: 18px;
         }
+        #chargingHistory {
+            margin-top: 20px;
+            font-size: 16px;
+            max-height: 150px;
+            overflow-y: scroll;
+        }
+        /* Light Theme */
+        .light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        /* Dark Theme */
+        .dark-theme {
+            background-color: #2e2e2e;
+            color: #ffffff;
+        }
+        /* Custom Background */
+        .custom-background {
+            background-size: cover;
+            background-position: center;
+        }
     </style>
 </head>
-<body>
+<body class="light-theme">
     <h1>Live Mobile Charging Status</h1>
     <div id="chargingStatus">Battery Status: 0%</div>
     <div id="chargingProgress">
@@ -45,14 +67,37 @@
     <div id="chargingMode"></div>
     <div id="timeRemaining"></div>
     <div id="batteryHealth"></div>
+    <div id="batteryEfficiency"></div>
+    <div id="chargingHistory"></div>
+
+    <!-- Theme Selection Dropdown -->
+    <div>
+        <label for="themeSelect">Select Theme: </label>
+        <select id="themeSelect" onchange="changeTheme()">
+            <option value="light">Light Mode</option>
+            <option value="dark">Dark Mode</option>
+            <option value="custom">Custom Background</option>
+        </select>
+    </div>
+
+    <!-- Custom Background URL Input -->
+    <div id="customBackgroundInput" style="display: none;">
+        <label for="bgUrl">Enter Background Image URL: </label>
+        <input type="text" id="bgUrl" placeholder="Enter URL for background image" oninput="applyCustomBackground()" />
+    </div>
 
     <script>
+        let chargingHistory = [];
+
+        // Function to update live charging status
         function updateBatteryStatus(battery) {
             const statusElement = document.getElementById('chargingStatus');
             const progressBar = document.getElementById('progressBar');
             const chargingMode = document.getElementById('chargingMode');
             const timeRemainingElement = document.getElementById('timeRemaining');
             const batteryHealthElement = document.getElementById('batteryHealth');
+            const batteryEfficiencyElement = document.getElementById('batteryEfficiency');
+            const chargingHistoryElement = document.getElementById('chargingHistory');
             
             let percentage = Math.floor(battery.level * 100);
             statusElement.innerText = `Battery Status: ${percentage}%`;
@@ -86,12 +131,16 @@
                 timeRemainingElement.innerText = `Discharging Time Left: ${hours}h ${minutes}m`;
             }
 
-            // Battery Health (Basic Example)
+            // Battery Health
             if (battery.charging && battery.dischargingTime === Infinity) {
                 batteryHealthElement.innerText = "Battery Health: Good";
             } else {
                 batteryHealthElement.innerText = "Battery Health: Charging";
             }
+
+            // Efficiency based on charging time
+            batteryEfficiencyElement.innerText = battery.charging ? 
+                `Charging Efficiency: Optimal` : `Charging Efficiency: Not Charging`;
 
             // Trigger alert and vibration when battery reaches 100%
             if (percentage === 100) {
@@ -106,11 +155,29 @@
             if (percentage <= 20) {
                 alert("Warning: Battery is low!");
             }
+
+            // Log the charging session
+            logChargingHistory(battery);
         }
 
+        // Function to play audio alert
         function playAudioAlert() {
             let audio = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Example beep sound
             audio.play();
+        }
+
+        // Function to log charging history
+        function logChargingHistory(battery) {
+            const percentage = Math.floor(battery.level * 100);
+            const historyEntry = `Battery at ${percentage}% - ${new Date().toLocaleTimeString()}`;
+            chargingHistory.push(historyEntry);
+            updateChargingHistory();
+        }
+
+        // Function to update charging history display
+        function updateChargingHistory() {
+            const chargingHistoryElement = document.getElementById('chargingHistory');
+            chargingHistoryElement.innerHTML = chargingHistory.join('<br>');
         }
 
         // Fetch battery status
@@ -131,6 +198,32 @@
             } else {
                 alert("Battery Status API is not supported on this device.");
             }
+        }
+
+        // Function to change themes
+        function changeTheme() {
+            const themeSelect = document.getElementById("themeSelect").value;
+            const body = document.body;
+
+            // Reset theme and background styles
+            body.classList.remove("light-theme", "dark-theme", "custom-background");
+            body.style.backgroundImage = "";
+
+            // Apply selected theme
+            if (themeSelect === "light") {
+                body.classList.add("light-theme");
+            } else if (themeSelect === "dark") {
+                body.classList.add("dark-theme");
+            } else {
+                body.classList.add("custom-background");
+                document.getElementById("customBackgroundInput").style.display = "block"; // Show custom background input
+            }
+        }
+
+        // Apply custom background
+        function applyCustomBackground() {
+            const bgUrl = document.getElementById("bgUrl").value;
+            document.body.style.backgroundImage = `url('${bgUrl}')`;
         }
 
         // Call the function to get battery status
