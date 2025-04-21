@@ -3,128 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESULTS</title>
-
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-
+    <title>Live Mobile Charging Status</title>
     <style>
-        .ui-datepicker {
-            width: 15em;
-            padding: .2em;
-            display: none;
-            background: #818484;
-        }
-        .ui-datepicker .ui-datepicker-title {
-            margin: 0 2.3em;
-            line-height: 1.2em;
+        body {
+            font-family: Arial, sans-serif;
             text-align: center;
-            color: #FFFFFF;
-            background: #2F99B4;
+            padding: 50px;
         }
-        .ui-datepicker table {
-            width: 70%;
-            font-size: .5em;
-            border-collapse: collapse;
-            font-family: sans-serif;
-            margin: 0 0 .4em;
-            color: #000000;
-            background: #9EEFEE;
+        #chargingStatus {
+            font-size: 24px;
+            margin-bottom: 20px;
         }
-        table {
-            float: center;
-            border-color: black;
-            border-radius: 15px;
-            border-style: outset;
-            background-color: #d0e4fe;
+        #chargingProgress {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 8px;
+            margin-top: 20px;
         }
-        input[type="text"] {
-            text-align: center;
-            padding: 5px;
+        #progressBar {
+            height: 30px;
+            width: 0;
+            background-color: #4caf50;
+            border-radius: 8px;
         }
-        .captcha-box {
+        #chargingMode {
+            margin-top: 20px;
             font-size: 20px;
-            font-weight: bold;
-            color: #4e2016;
-            background: #f2f2f2;
-            padding: 10px;
-            display: inline-block;
         }
     </style>
+</head>
+<body>
+    <h1>Live Mobile Charging Status</h1>
+    <div id="chargingStatus">Battery Status: 0%</div>
+    <div id="chargingProgress">
+        <div id="progressBar"></div>
+    </div>
+    <div id="chargingMode"></div>
 
     <script>
-        function capitalizeMe(element) {
-            element.value = element.value.toUpperCase();
-        }
+        // Function to update the live charging status
+        function updateBatteryStatus(battery) {
+            const statusElement = document.getElementById('chargingStatus');
+            const progressBar = document.getElementById('progressBar');
+            const chargingMode = document.getElementById('chargingMode');
+            
+            // Update the charging percentage
+            let percentage = Math.floor(battery.level * 100);
+            statusElement.innerText = `Battery Status: ${percentage}%`;
 
-        function generateCaptcha() {
-            let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            let captcha = "";
-            for (let i = 0; i < 6; i++) {
-                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            document.getElementById("txtCaptcha").value = captcha;
-        }
+            // Update the progress bar
+            progressBar.style.width = percentage + "%";
 
-        function validateForm(event) {
-            event.preventDefault();
-            let htno = document.getElementById("htno").value.toUpperCase();
-            let enteredCaptcha = document.getElementById("txtInput").value;
-            let actualCaptcha = document.getElementById("txtCaptcha").value;
-
-            if (htno === "21P75A609" && enteredCaptcha === actualCaptcha) {
-                alert("Success! Redirecting...");
-                window.location.href = htno + ".html"; // Redirect to the result page
-            } else if (htno !== "21P75A609") {
-                alert("Invalid Hall Ticket Number");
+            // Update charging mode
+            if (battery.charging) {
+                chargingMode.innerText = "Charging... (Plugged in)";
             } else {
-                alert("Incorrect CAPTCHA. Please try again.");
-                generateCaptcha();
+                chargingMode.innerText = "Not Charging";
+            }
+
+            // Trigger vibration when charging is complete (100%)
+            if (percentage === 100) {
+                if ("vibrate" in navigator) {
+                    navigator.vibrate(500); // Vibrate for 500 milliseconds
+                }
+                chargingMode.innerText = "Fully Charged!";
             }
         }
 
-        $(document).ready(function () {
-            $("#datepicker").datepicker({
-                dateFormat: "yy/mm/dd"
-            });
-            generateCaptcha();
-        });
+        // Function to fetch battery status
+        function getBatteryStatus() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(function(battery) {
+                    // Update battery status initially
+                    updateBatteryStatus(battery);
+
+                    // Listen for changes in battery status
+                    battery.onchargingchange = function() {
+                        updateBatteryStatus(battery);
+                    };
+                    battery.onlevelchange = function() {
+                        updateBatteryStatus(battery);
+                    };
+                });
+            } else {
+                alert("Battery Status API is not supported on this device.");
+            }
+        }
+
+        // Call the function to get battery status
+        getBatteryStatus();
     </script>
-</head>
-<body oncontextmenu="return false">
-
-    <br><br>
-    <div align="center">
-        <form id="myForm" onsubmit="validateForm(event)">
-            <table style="width: 55%; height: 55%; text-align: left; float: center; border: solid black 1px;">
-                <tbody>
-                    <tr>
-                        <td>Enter Hall Ticket Number</td>
-                        <td><input type="text" id="htno" required onkeyup="capitalizeMe(this);"></td>
-                    </tr>
-                    <tr>
-                        <td>Enter Date of Birth</td>
-                        <td><input type="text" id="datepicker" required></td>
-                        <td>YYYY/MM/DD</td>
-                    </tr>
-                    <tr>
-                        <td>Please enter this CAPTCHA code:</td>
-                        <td><input type="text" id="txtCaptcha" class="captcha-box" disabled></td>
-                        <td><input type="button" value="Refresh" onclick="generateCaptcha();"></td>
-                    </tr>
-                    <tr>
-                        <td>Enter CAPTCHA</td>
-                        <td><input type="text" id="txtInput" required></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><input type="submit" value="Submit"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-
 </body>
 </html>
