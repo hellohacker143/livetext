@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photo Storage System</title>
+  <title>User-Specific Image Storage</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -81,30 +81,34 @@
   </div>
 
   <script>
-    const storedPhotos = JSON.parse(localStorage.getItem("photos")) || [];
-    const username = "sai";
-    const password = "sai";
-    let isLoggedIn = false;
+    // Check if the user is logged in
+    let currentUser = localStorage.getItem("currentUser");
+    const storedPhotos = JSON.parse(localStorage.getItem("photos")) || {};
 
-    // Show photos from localStorage
+    // Show photos from localStorage based on the current user
     function showPhotos() {
       const imageContainer = document.getElementById("image-container");
       imageContainer.innerHTML = "";
-      storedPhotos.forEach((photo, index) => {
-        const div = document.createElement("div");
-        div.classList.add("image-box");
 
-        const img = document.createElement("img");
-        img.src = photo;
-        div.appendChild(img);
+      if (currentUser && storedPhotos[currentUser]) {
+        storedPhotos[currentUser].forEach((photo, index) => {
+          const div = document.createElement("div");
+          div.classList.add("image-box");
 
-        const deleteButton = document.createElement("button");
-        deleteButton.innerText = "Delete";
-        deleteButton.onclick = () => deletePhoto(index);
-        div.appendChild(deleteButton);
+          const img = document.createElement("img");
+          img.src = photo;
+          div.appendChild(img);
 
-        imageContainer.appendChild(div);
-      });
+          const deleteButton = document.createElement("button");
+          deleteButton.innerText = "Delete";
+          deleteButton.onclick = () => deletePhoto(index);
+          div.appendChild(deleteButton);
+
+          imageContainer.appendChild(div);
+        });
+      } else {
+        imageContainer.innerHTML = "<p>No photos uploaded yet.</p>";
+      }
     }
 
     // Login function
@@ -112,13 +116,14 @@
       const inputUsername = document.getElementById("username").value;
       const inputPassword = document.getElementById("password").value;
 
-      if (inputUsername === username && inputPassword === password) {
-        isLoggedIn = true;
+      if (inputUsername && inputPassword) {
+        currentUser = inputUsername;
+        localStorage.setItem("currentUser", currentUser); // Store current user
         document.getElementById("login-section").classList.add("hidden");
         document.getElementById("photo-upload-section").classList.remove("hidden");
         showPhotos();
       } else {
-        alert("Invalid credentials. Please try again.");
+        alert("Please enter both username and password.");
       }
     }
 
@@ -129,7 +134,10 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          storedPhotos.push(e.target.result);
+          if (!storedPhotos[currentUser]) {
+            storedPhotos[currentUser] = [];
+          }
+          storedPhotos[currentUser].push(e.target.result);
           localStorage.setItem("photos", JSON.stringify(storedPhotos));
           showPhotos();
         };
@@ -140,14 +148,14 @@
 
     // Delete photo function
     function deletePhoto(index) {
-      storedPhotos.splice(index, 1);
+      storedPhotos[currentUser].splice(index, 1);
       localStorage.setItem("photos", JSON.stringify(storedPhotos));
       showPhotos();
     }
 
     // Logout function
     function logout() {
-      isLoggedIn = false;
+      localStorage.removeItem("currentUser");
       document.getElementById("photo-upload-section").classList.add("hidden");
       document.getElementById("login-section").classList.remove("hidden");
       document.getElementById("username").value = "";
