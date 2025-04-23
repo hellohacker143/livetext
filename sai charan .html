@@ -12,19 +12,20 @@
       background-color: #f7f7f7;
     }
     #image-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+      justify-items: center;
       margin-top: 20px;
     }
     .image-box {
       position: relative;
-      margin: 10px;
     }
     img {
-      max-width: 150px;
+      max-width: 100%;
       max-height: 150px;
       border: 1px solid #ccc;
+      border-radius: 8px;
     }
     button {
       margin-top: 10px;
@@ -33,11 +34,26 @@
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 5px;
     }
     button:hover {
       background-color: #c0392b;
     }
     .hidden { display: none; }
+
+    /* Logout button style */
+    #logout-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #logout-button:hover {
+      background-color: #2980b9;
+    }
   </style>
 </head>
 <body>
@@ -59,6 +75,9 @@
 
     <h2>Your Photos</h2>
     <div id="image-container"></div>
+
+    <!-- Logout Button -->
+    <button id="logout-button" onclick="logout()">Logout</button>
   </div>
 
   <script>
@@ -124,6 +143,15 @@
       storedPhotos.splice(index, 1);
       localStorage.setItem("photos", JSON.stringify(storedPhotos));
       showPhotos();
+    }
+
+    // Logout function
+    function logout() {
+      isLoggedIn = false;
+      document.getElementById("photo-upload-section").classList.add("hidden");
+      document.getElementById("login-section").classList.remove("hidden");
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
     }
   </script>
 </body>
