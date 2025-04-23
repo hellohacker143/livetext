@@ -130,20 +130,15 @@
     const email = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    if (email && password) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          currentUser = userCredential.user.email.replace(/\./g, "_"); // Sanitize for folder use
-          localStorage.setItem("currentUser", currentUser);
-          document.getElementById("login-section").classList.add("hidden");
-          document.getElementById("photo-upload-section").classList.remove("hidden");
-          showPhotos();
-        })
-        .catch((error) => {
-          alert("Login failed: " + error.message);
-        });
+    // Hardcode login credentials (email: "sai", password: "sai")
+    if (email === "sai" && password === "sai") {
+      currentUser = "sai"; // Set a fixed user "sai"
+      localStorage.setItem("currentUser", currentUser);
+      document.getElementById("login-section").classList.add("hidden");
+      document.getElementById("photo-upload-section").classList.remove("hidden");
+      showPhotos();
     } else {
-      alert("Please enter email and password.");
+      alert("Invalid login credentials.");
     }
   }
 
