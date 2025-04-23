@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User-Specific Image Storage</title>
   <style>
     body {
@@ -12,7 +11,6 @@
       margin-top: 50px;
       background-color: #f7f7f7;
     }
-
     #image-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -20,18 +18,15 @@
       justify-items: center;
       margin-top: 20px;
     }
-
     .image-box {
       position: relative;
     }
-
     img {
       max-width: 100%;
       max-height: 150px;
       border: 1px solid #ccc;
       border-radius: 8px;
     }
-
     button {
       margin-top: 10px;
       padding: 5px 10px;
@@ -41,16 +36,12 @@
       cursor: pointer;
       border-radius: 5px;
     }
-
     button:hover {
       background-color: #c0392b;
     }
-
     .hidden {
       display: none;
     }
-
-    /* Logout button style */
     #logout-button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -60,168 +51,134 @@
       cursor: pointer;
       border-radius: 5px;
     }
-
     #logout-button:hover {
       background-color: #2980b9;
     }
   </style>
 </head>
-
 <body>
-  <h1>Welcome to Your Photo Storage</h1>
 
-  <!-- Login Section -->
-  <div id="login-section">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username"><br>
-    <input type="password" id="password" placeholder="Password"><br>
-    <button onclick="login()">Login</button>
-  </div>
+<h1>Welcome to Your Photo Storage</h1>
 
-  <!-- Photo Upload Section -->
-  <div id="photo-upload-section" class="hidden">
-    <h2>Upload Photos</h2>
-    <input type="file" id="photo-upload" accept="image/*"><br>
-    <button onclick="uploadPhoto()">Upload Photo</button>
+<div id="login-section">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Email"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+</div>
 
-    <h2>Your Photos</h2>
-    <div id="image-container"></div>
+<div id="photo-upload-section" class="hidden">
+  <h2>Upload Photos</h2>
+  <input type="file" id="photo-upload" accept="image/*"><br>
+  <button onclick="uploadPhoto()">Upload Photo</button>
 
-    <!-- Logout Button -->
-    <button id="logout-button" onclick="logout()">Logout</button>
-  </div>
+  <h2>Your Photos</h2>
+  <div id="image-container"></div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+  <button id="logout-button" onclick="logout()">Logout</button>
+</div>
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyD0ZNQkPxmZYW2WfudSpbvcb_yK-BAVxkM",
-      authDomain: "rajnivas-6c0d5.firebaseapp.com",
-      projectId: "rajnivas-6c0d5",
-      storageBucket: "rajnivas-6c0d5.appspot.com",
-      messagingSenderId: "185406583924",
-      appId: "1:185406583924:web:383472820aa71cf151cd21",
-      measurementId: "G-HTTVSZ16VX"
-    };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const storage = getStorage(app);
-    const analytics = getAnalytics(app);
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0ZNQkPxmZYW2WfudSpbvcb_yK-BAVxkM",
+    authDomain: "rajnivas-6c0d5.firebaseapp.com",
+    projectId: "rajnivas-6c0d5",
+    storageBucket: "rajnivas-6c0d5.appspot.com",
+    messagingSenderId: "185406583924",
+    appId: "1:185406583924:web:383472820aa71cf151cd21",
+    measurementId: "G-HTTVSZ16VX"
+  };
 
-    let currentUser = null;
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const storage = getStorage(app);
 
-    // Show photos from Firebase Storage based on the current user
-    function showPhotos() {
-      const imageContainer = document.getElementById("image-container");
-      imageContainer.innerHTML = "";
+  let currentUser = null;
 
-      if (currentUser) {
-        // Here you would query Firebase Storage for the current user's photos
-        // For the demo, assuming you have a list of URLs saved in Firebase Database or Storage.
-        // Example: List all the files from a specific folder in Firebase Storage.
-        const storageRef = ref(storage, `photos/${currentUser}`);
+  async function showPhotos() {
+    const imageContainer = document.getElementById("image-container");
+    imageContainer.innerHTML = "";
 
-        // Get all images for current user (you will need a list of files)
-        // The following code is for demonstration, assuming you have a way to list image URLs.
-        const images = ["image1_url", "image2_url"]; // Replace with real URLs from Firebase
+    const folderRef = ref(storage, `photos/${currentUser}`);
+    const result = await listAll(folderRef);
+    result.items.forEach(async (itemRef) => {
+      const url = await getDownloadURL(itemRef);
+      const div = document.createElement("div");
+      div.classList.add("image-box");
 
-        images.forEach(url => {
-          const div = document.createElement("div");
-          div.classList.add("image-box");
+      const img = document.createElement("img");
+      img.src = url;
+      div.appendChild(img);
 
-          const img = document.createElement("img");
-          img.src = url;
-          div.appendChild(img);
+      const deleteButton = document.createElement("button");
+      deleteButton.innerText = "Delete";
+      deleteButton.onclick = async () => {
+        await deleteObject(itemRef);
+        showPhotos();
+      };
+      div.appendChild(deleteButton);
 
-          const deleteButton = document.createElement("button");
-          deleteButton.innerText = "Delete";
-          deleteButton.onclick = () => deletePhoto(url);
-          div.appendChild(deleteButton);
+      imageContainer.appendChild(div);
+    });
+  }
 
-          imageContainer.appendChild(div);
+  function login() {
+    const email = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if (email && password) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          currentUser = userCredential.user.email.replace(/\./g, "_"); // Sanitize for folder use
+          localStorage.setItem("currentUser", currentUser);
+          document.getElementById("login-section").classList.add("hidden");
+          document.getElementById("photo-upload-section").classList.remove("hidden");
+          showPhotos();
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
         });
-      } else {
-        imageContainer.innerHTML = "<p>No photos uploaded yet.</p>";
-      }
+    } else {
+      alert("Please enter email and password.");
     }
+  }
 
-    // Login function
-    function login() {
-      const inputUsername = document.getElementById("username").value;
-      const inputPassword = document.getElementById("password").value;
-
-      if (inputUsername && inputPassword) {
-        signInWithEmailAndPassword(auth, inputUsername, inputPassword)
-          .then((userCredential) => {
-            currentUser = userCredential.user.email; // Get current user's email
-            localStorage.setItem("currentUser", currentUser); // Store current user
-            document.getElementById("login-section").classList.add("hidden");
-            document.getElementById("photo-upload-section").classList.remove("hidden");
-            showPhotos();
-          })
-          .catch((error) => {
-            alert("Login failed: " + error.message);
-          });
-      } else {
-        alert("Please enter both username and password.");
-      }
-    }
-
-    // Upload photo function
-    function uploadPhoto() {
-      const fileInput = document.getElementById("photo-upload");
-      const file = fileInput.files[0];
-      if (file) {
-        const storageRef = ref(storage, `photos/${currentUser}/${file.name}`);
-
-        uploadBytes(storageRef, file).then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((url) => {
-            // Once the upload is complete, display the image in the gallery
-            showPhotos(); // Update the gallery
-          });
-        });
-
-        fileInput.value = ""; // Reset input
-      }
-    }
-
-    // Delete photo function (example)
-    function deletePhoto(url) {
-      // Here, you'd remove the photo from Firebase Storage
-      console.log("Deleting photo:", url);
-      showPhotos();
-    }
-
-    // Logout function
-    function logout() {
-      signOut(auth).then(() => {
-        currentUser = null;
-        localStorage.removeItem("currentUser");
-        document.getElementById("photo-upload-section").classList.add("hidden");
-        document.getElementById("login-section").classList.remove("hidden");
-        document.getElementById("username").value = "";
-        document.getElementById("password").value = "";
-      }).catch((error) => {
-        console.log("Error signing out:", error);
+  function uploadPhoto() {
+    const fileInput = document.getElementById("photo-upload");
+    const file = fileInput.files[0];
+    if (file && currentUser) {
+      const fileRef = ref(storage, `photos/${currentUser}/${file.name}`);
+      uploadBytes(fileRef, file).then(() => {
+        showPhotos();
+        fileInput.value = "";
       });
     }
+  }
 
-    // Initialize the page based on login state
-    if (localStorage.getItem("currentUser")) {
-      currentUser = localStorage.getItem("currentUser");
+  function logout() {
+    signOut(auth).then(() => {
+      currentUser = null;
+      localStorage.removeItem("currentUser");
+      document.getElementById("photo-upload-section").classList.add("hidden");
+      document.getElementById("login-section").classList.remove("hidden");
+    });
+  }
+
+  // On page load
+  window.onload = () => {
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      currentUser = storedUser;
       document.getElementById("login-section").classList.add("hidden");
       document.getElementById("photo-upload-section").classList.remove("hidden");
       showPhotos();
     }
-  </script>
+  };
+</script>
 
 </body>
-
 </html>
