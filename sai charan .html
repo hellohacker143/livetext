@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capture Image from Webcam</title>
+  <title>Photo Storage System</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,84 +11,120 @@
       margin-top: 50px;
       background-color: #f7f7f7;
     }
-    #video {
-      width: 100%;
-      max-width: 500px;
+    #image-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .image-box {
+      position: relative;
+      margin: 10px;
+    }
+    img {
+      max-width: 150px;
+      max-height: 150px;
       border: 1px solid #ccc;
     }
-    #capture-button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #e74c3c;
       color: white;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
     }
-    #capture-button:hover {
-      background-color: #45a049;
+    button:hover {
+      background-color: #c0392b;
     }
-    #captured-image {
-      margin-top: 20px;
-      max-width: 100%;
-      max-height: 400px;
-    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <h1>Capture Image from Webcam</h1>
+  <h1>Welcome to Your Photo Storage</h1>
 
-  <!-- Video Element to Show Live Webcam Feed -->
-  <video id="video" autoplay></video>
+  <!-- Login Section -->
+  <div id="login-section">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+  </div>
 
-  <!-- Capture Button -->
-  <button id="capture-button">Capture Photo</button>
+  <!-- Photo Upload Section -->
+  <div id="photo-upload-section" class="hidden">
+    <h2>Upload Photos</h2>
+    <input type="file" id="photo-upload" accept="image/*"><br>
+    <button onclick="uploadPhoto()">Upload Photo</button>
 
-  <!-- Display the Captured Image -->
-  <div id="image-container">
-    <img id="captured-image" src="" alt="Captured Image will appear here" style="display: none;">
+    <h2>Your Photos</h2>
+    <div id="image-container"></div>
   </div>
 
   <script>
-    // Get the video element and the captured image element
-    const video = document.getElementById("video");
-    const captureButton = document.getElementById("capture-button");
-    const capturedImage = document.getElementById("captured-image");
+    const storedPhotos = JSON.parse(localStorage.getItem("photos")) || [];
+    const username = "sai";
+    const password = "sai";
+    let isLoggedIn = false;
 
-    // Access the webcam using getUserMedia API
-    async function startWebcam() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-      } catch (error) {
-        console.error("Error accessing webcam: ", error);
-        alert("Unable to access your webcam. Please allow webcam access.");
+    // Show photos from localStorage
+    function showPhotos() {
+      const imageContainer = document.getElementById("image-container");
+      imageContainer.innerHTML = "";
+      storedPhotos.forEach((photo, index) => {
+        const div = document.createElement("div");
+        div.classList.add("image-box");
+
+        const img = document.createElement("img");
+        img.src = photo;
+        div.appendChild(img);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "Delete";
+        deleteButton.onclick = () => deletePhoto(index);
+        div.appendChild(deleteButton);
+
+        imageContainer.appendChild(div);
+      });
+    }
+
+    // Login function
+    function login() {
+      const inputUsername = document.getElementById("username").value;
+      const inputPassword = document.getElementById("password").value;
+
+      if (inputUsername === username && inputPassword === password) {
+        isLoggedIn = true;
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("photo-upload-section").classList.remove("hidden");
+        showPhotos();
+      } else {
+        alert("Invalid credentials. Please try again.");
       }
     }
 
-    // Capture photo from the video feed
-    captureButton.addEventListener("click", function() {
-      // Create a canvas to capture the image from the video
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
+    // Upload photo function
+    function uploadPhoto() {
+      const fileInput = document.getElementById("photo-upload");
+      const file = fileInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          storedPhotos.push(e.target.result);
+          localStorage.setItem("photos", JSON.stringify(storedPhotos));
+          showPhotos();
+        };
+        reader.readAsDataURL(file);
+        fileInput.value = ""; // Reset input
+      }
+    }
 
-      // Set the canvas size to the video frame size
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      // Draw the current frame from the video onto the canvas
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // Convert the canvas content to a data URL (image)
-      const dataUrl = canvas.toDataURL("image/png");
-
-      // Display the captured image on the page
-      capturedImage.src = dataUrl;
-      capturedImage.style.display = "block";
-    });
-
-    // Start the webcam when the page loads
-    window.onload = startWebcam;
+    // Delete photo function
+    function deletePhoto(index) {
+      storedPhotos.splice(index, 1);
+      localStorage.setItem("photos", JSON.stringify(storedPhotos));
+      showPhotos();
+    }
   </script>
 </body>
 </html>
