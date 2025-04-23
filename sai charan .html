@@ -1,1 +1,95 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capture Image from Webcam</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background-color: #f7f7f7;
+    }
+    #video {
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+    }
+    #capture-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #capture-button:hover {
+      background-color: #45a049;
+    }
+    #captured-image {
+      margin-top: 20px;
+      max-width: 100%;
+      max-height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Capture Image from Webcam</h1>
+
+  <!-- Video Element to Show Live Webcam Feed -->
+  <video id="video" autoplay></video>
+
+  <!-- Capture Button -->
+  <button id="capture-button">Capture Photo</button>
+
+  <!-- Display the Captured Image -->
+  <div id="image-container">
+    <img id="captured-image" src="" alt="Captured Image will appear here" style="display: none;">
+  </div>
+
+  <script>
+    // Get the video element and the captured image element
+    const video = document.getElementById("video");
+    const captureButton = document.getElementById("capture-button");
+    const capturedImage = document.getElementById("captured-image");
+
+    // Access the webcam using getUserMedia API
+    async function startWebcam() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (error) {
+        console.error("Error accessing webcam: ", error);
+        alert("Unable to access your webcam. Please allow webcam access.");
+      }
+    }
+
+    // Capture photo from the video feed
+    captureButton.addEventListener("click", function() {
+      // Create a canvas to capture the image from the video
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      // Set the canvas size to the video frame size
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Draw the current frame from the video onto the canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert the canvas content to a data URL (image)
+      const dataUrl = canvas.toDataURL("image/png");
+
+      // Display the captured image on the page
+      capturedImage.src = dataUrl;
+      capturedImage.style.display = "block";
+    });
+
+    // Start the webcam when the page loads
+    window.onload = startWebcam;
+  </script>
+</body>
+</html>
