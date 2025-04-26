@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #128C7E; /* Darker Green */
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>QR Code Generator</h2>
+        <input type="text" id="inputField" placeholder="Enter Phone Number or URL" />
+        <button onclick="generateQRCode()">Generate QR Code</button>
+
+        <div id="qrcode"></div>
+    </div>
+
+    <script>
+        function generateQRCode() {
+            const input = document.getElementById('inputField').value;
+            
+            if (input) {
+                let qrCodeData;
+                
+                // Check if the input is a phone number (Assume the input is a phone number if it contains only numbers)
+                if (/^\d+$/.test(input)) {
+                    qrCodeData = `https://wa.me/${input}`;
+                } else {
+                    // If it's not a phone number, treat it as a URL
+                    qrCodeData = input;
+                }
+                
+                // Clear previous QR code
+                document.getElementById('qrcode').innerHTML = '';
+                
+                // Generate QR Code for the input URL or WhatsApp link
+                QRCode.toDataURL(qrCodeData, { errorCorrectionLevel: 'H' }, function (err, url) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    
+                    // Display the generated QR code
+                    const img = document.createElement('img');
+                    img.src = url;
+                    document.getElementById('qrcode').appendChild(img);
+                });
+            } else {
+                alert('Please enter a phone number or a URL!');
+            }
+        }
+    </script>
+
+</body>
+</html>
