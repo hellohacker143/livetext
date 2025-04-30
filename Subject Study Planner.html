@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Planner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 400px;
+    }
+    input {
+      padding: 10px;
+      margin: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Subject Study Planner</h1>
+    <input type="text" id="subject" placeholder="Enter subject name" />
+    <input type="text" id="hours" placeholder="Enter hours to study" />
+    <button onclick="addSubject()">Add Subject</button>
+    <h3>Your Subjects:</h3>
+    <ul id="subject-list"></ul>
+  </div>
+
+  <script>
+    function addSubject() {
+      const subject = document.getElementById("subject").value;
+      const hours = document.getElementById("hours").value;
+
+      if (subject && hours) {
+        const subjectList = document.getElementById("subject-list");
+        const li = document.createElement("li");
+        li.innerHTML = `${subject}: ${hours} hours`;
+        subjectList.appendChild(li);
+        
+        document.getElementById("subject").value = "";
+        document.getElementById("hours").value = "";
+      } else {
+        alert("Please fill in both fields!");
+      }
+    }
+  </script>
+</body>
+</html>
