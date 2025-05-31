@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio | Ravikanti Sai Charan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hero-bg {
+      background-image: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800" aria-label="Portfolio Website">
+  <!-- Voice Navigation Script -->
+  <script>
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      if (transcript.includes("home")) {
+        document.getElementById("hero").scrollIntoView({ behavior: 'smooth' });
+      } else if (transcript.includes("about")) {
+        document.getElementById("about").scrollIntoView({ behavior: 'smooth' });
+      } else if (transcript.includes("skills")) {
+        document.getElementById("skills").scrollIntoView({ behavior: 'smooth' });
+      } else if (transcript.includes("projects")) {
+        document.getElementById("projects").scrollIntoView({ behavior: 'smooth' });
+      } else if (transcript.includes("contact")) {
+        document.getElementById("contact").scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    recognition.start();
+  </script>
+
+  <!-- Header -->
+  <header class="bg-white shadow-md fixed top-0 w-full z-50" role="banner">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold" aria-label="Site title">Ravikanti Sai Charan</h1>
+      <nav class="space-x-6" aria-label="Main navigation">
+        <a href="#hero" class="hover:text-blue-600" aria-label="Go to Home section">Home</a>
+        <a href="#about" class="hover:text-blue-600" aria-label="Go to About section">About</a>
+        <a href="#skills" class="hover:text-blue-600" aria-label="Go to Skills section">Skills</a>
+        <a href="#projects" class="hover:text-blue-600" aria-label="Go to Projects section">Projects</a>
+        <a href="#contact" class="hover:text-blue-600" aria-label="Go to Contact section">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section with Fullscreen Background -->
+  <section id="hero" class="hero-bg h-screen flex flex-col items-center justify-center text-white text-center px-6" aria-label="Hero section">
+    <div class="bg-black bg-opacity-50 p-8 rounded">
+      <h2 class="text-5xl font-bold mb-4">Hi, I'm Ravikanti Sai Charan</h2>
+      <p class="text-lg mb-6">AI & ML Enthusiast | Digital Marketer | Web Developer</p>
+      <a href="#projects" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition font-semibold" aria-label="View My Work">View My Work</a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 px-6 max-w-4xl mx-auto" aria-label="About me section">
+    <h3 class="text-2xl font-bold mb-4 text-center">About Me</h3>
+    <p class="text-center max-w-2xl mx-auto">
+      Motivated and detail-oriented digital marketing fresher with a strong foundation in Artificial Intelligence, Machine Learning, and web development. 
+      Eager to leverage analytical skills, SEO knowledge, and social media management expertise to create data-driven marketing campaigns that boost brand visibility, 
+      engage target audiences, and drive measurable business growth.
+    </p>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="bg-white py-16 px-6" aria-label="Skills section">
+    <h3 class="text-2xl font-bold mb-8 text-center">Skills</h3>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-4xl mx-auto text-center">
+      <div class="bg-gray-100 p-4 rounded shadow">Graphic Design (Canva)</div>
+      <div class="bg-gray-100 p-4 rounded shadow">Video Editing</div>
+      <div class="bg-gray-100 p-4 rounded shadow">Content Adaptation</div>
+      <div class="bg-gray-100 p-4 rounded shadow">SEO (On-Page, Keyword Research)</div>
+      <div class="bg-gray-100 p-4 rounded shadow">Google Ads</div>
+      <div class="bg-gray-100 p-4 rounded shadow">Meta/Facebook Ads</div>
+      <div class="bg-gray-100 p-4 rounded shadow">WhatsApp Ads</div>
+      <div class="bg-gray-100 p-4 rounded shadow">SEMrush</div>
+      <div class="bg-gray-100 p-4 rounded shadow">Social Media Management</div>
+      <div class="bg-gray-100 p-4 rounded shadow">HTML, CSS, JavaScript</div>
+      <div class="bg-gray-100 p-4 rounded shadow">Tailwind CSS</div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="py-16 px-6 bg-gray-50" aria-label="Projects section">
+    <h3 class="text-2xl font-bold mb-8 text-center">Projects</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+        <h4 class="font-semibold mb-2">Own Blog</h4>
+        <p class="text-sm">Publishes SEO-optimized content on digital marketing, AI, and student career tips. Implements on-page SEO, uses GPT tools for drafting.</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+        <h4 class="font-semibold mb-2">Content Expander Tool</h4>
+        <p class="text-sm">A tool that turns short prompts into long-form SEO content.</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+        <h4 class="font-semibold mb-2">AI Chatbot Integration</h4>
+        <p class="text-sm">Integrated chatbot to improve user engagement and reduce bounce rate on blogs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 px-6 max-w-3xl mx-auto" aria-label="Contact section">
+    <h3 class="text-2xl font-bold mb-4 text-center">Contact Me</h3>
+    <form class="space-y-4">
+      <input type="text" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded" required />
+      <input type="email" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded" required />
+      <textarea placeholder="Your Message" class="w-full p-3 border border-gray-300 rounded h-32" required></textarea>
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Send Message</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-6">
+    <p class="text-sm">Ramnagar, Secunderabad | +91 76608 56536 | rk91771432@gmail.com</p>
+    <p class="text-xs mt-2">&copy; 2025 Ravikanti Sai Charan. All rights reserved.</p>
+  </footer>
+</body>
+</html>
