@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Multiple URLs Automatically</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 500px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin: 15px 0;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+    }
+    .note {
+      font-size: 14px;
+      color: #666;
+    }
+    #urlCount {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+    .valid {
+      color: green;
+    }
+    .invalid {
+      color: red;
+    }
+    #urlPreview {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #007bff;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .dark-mode {
+      background-color: #333;
+      color: #f4f4f4;
+    }
+    .dark-mode button {
+      background-color: #555;
+    }
+    .dark-mode textarea {
+      background-color: #444;
+      color: white;
+      border-color: #666;
+    }
+    .help-section {
+      margin-top: 30px;
+      font-size: 16px;
+      text-align: left;
+      color: #333;
+    }
+    .help-section h2 {
+      font-size: 20px;
+      color: #007bff;
+    }
+    .help-section ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .help-section li {
+      margin: 10px 0;
+    }
+    .help-section a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="container">
+    <h1>Open Multiple URLs Automatically</h1>
+    <textarea id="urlInput" placeholder="Paste URLs here, one per line." oninput="openUrls()" autofocus></textarea>
+    <p class="note">Note: Enter each URL on a new line. URLs will open automatically in new tabs.</p>
+    <p id="urlCount">URLs: 0 Valid, 0 Invalid</p>
+    <div id="urlPreview"></div>
+    <button onclick="clearInput()">Clear</button>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <p class="note">Max 5 URLs at a time.</p>
+
+    <!-- How It Helps Section -->
+    <div class="help-section">
+      <h2>How It Helps Digital Marketers</h2>
+      <ul>
+        <li><strong>Efficient Content Research:</strong> Quickly gather and analyze content from multiple resources by opening all URLs at once.</li>
+        <li><strong>Time-Saving:</strong> Instead of opening each URL manually, paste them and open them in multiple tabs instantly, saving time on research, competitor analysis, and SEO checks.</li>
+        <li><strong>Campaign & Ad Monitoring:</strong> Quickly monitor the performance of ads, landing pages, and competitors' sites by opening all related URLs simultaneously.</li>
+        <li><strong>SEO & Link Building:</strong> Digital marketers can open backlinks, landing pages, and competitor sites to monitor SEO performance and optimize strategies.</li>
+        <li><strong>Cross-Platform Management:</strong> Monitor ads, social media campaigns, and marketing funnels across various platforms (Google Ads, Facebook, etc.) simultaneously.</li>
+        <li><strong>Improved Collaboration:</strong> Share a list of URLs with your team for quick review, tracking, or optimizing your digital marketing efforts.</li>
+        <li><strong><a href="https://www.example.com" target="_blank">Learn More</a></strong></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+    // Dark Mode Toggle
+    let darkMode = false;
+
+    function toggleDarkMode() {
+      darkMode = !darkMode;
+      const container = document.getElementById('container');
+      if (darkMode) {
+        container.classList.add('dark-mode');
+      } else {
+        container.classList.remove('dark-mode');
+      }
+    }
+
+    function openUrls() {
+      const urlsText = document.getElementById('urlInput').value.trim();
+      const urls = urlsText.split('\n').map(url => url.trim()).filter(url => url.length > 0);
+
+      let validCount = 0;
+      let invalidCount = 0;
+      let previewHtml = '';
+
+      // Prevent opening more than 5 URLs
+      if (urls.length > 5) {
+        alert("You can only open a maximum of 5 URLs at a time.");
+        return;
+      }
+
+      urls.forEach(url => {
+        if (isValidUrl(url)) {
+          validCount++;
+          previewHtml += `<p><a href="${url}" target="_blank">${url}</a></p>`;
+          window.open(url, '_blank');
+        } else {
+          invalidCount++;
+        }
+      });
+
+      document.getElementById('urlCount').textContent = `URLs: ${validCount} Valid, ${invalidCount} Invalid`;
+      document.getElementById('urlPreview').innerHTML = previewHtml;
+    }
+
+    function clearInput() {
+      document.getElementById('urlInput').value = '';
+      document.getElementById('urlCount').textContent = 'URLs: 0 Valid, 0 Invalid';
+      document.getElementById('urlPreview').innerHTML = '';
+    }
+
+    function isValidUrl(url) {
+      // Ensure URLs start with http:// or https://
+      const pattern = new RegExp('^(https?:\\/\\/)', 'i');
+      if (!pattern.test(url)) {
+        url = 'http://' + url;
+      }
+      return pattern.test(url);
+    }
+
+    // Drag-and-drop functionality
+    document.getElementById('urlInput').addEventListener('drop', handleFileDrop);
+
+    function handleFileDrop(event) {
+      event.preventDefault();
+      const file = event.dataTransfer.files[0];
+      if (file && file.type === 'text/plain') {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('urlInput').value = e.target.result;
+          openUrls();
+        };
+        reader.readAsText(file);
+      }
+    }
+  </script>
+
+</body>
+</html>
