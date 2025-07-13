@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live SERP Title & Description Preview with Counter</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+        input, textarea { padding: 10px; margin: 5px 0; width: 100%; max-width: 500px; display: block; border: 2px solid #ccc; border-radius: 5px; transition: border-color 0.3s; }
+        .serp-preview { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px; }
+        .serp-preview-title { color: #1a0dab; font-size: 18px; margin-bottom: 5px; }
+        .serp-preview-url { color: #006621; font-size: 14px; }
+        .serp-preview-description { color: #545454; font-size: 14px; margin-top: 5px; }
+        .counter { font-size: 14px; margin-bottom: 5px; }
+        .over-limit { color: red; }
+        @media(max-width: 600px) { body { padding: 10px; } }
+    </style>
+</head>
+<body>
+    <h1>Live SERP Title & Description Preview</h1>
+    <input type="text" id="titleInput" placeholder="Enter Title here..." oninput="updatePreview()">
+    <div class="counter" id="titleCount">Title Length: 0 / 60</div>
+    <textarea id="descriptionInput" placeholder="Enter Meta Description here..." rows="3" oninput="updatePreview()"></textarea>
+    <div class="counter" id="descriptionCount">Description Length: 0 / 160</div>
+    <input type="text" id="urlInput" placeholder="Enter URL here..." oninput="updatePreview()">
+
+    <div class="serp-preview" id="serpPreview">
+        <div class="serp-preview-title">Your Title Will Appear Here</div>
+        <div class="serp-preview-url">yourwebsite.com</div>
+        <div class="serp-preview-description">Your meta description will appear here for live preview.</div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const titleField = document.getElementById('titleInput');
+            const descField = document.getElementById('descriptionInput');
+            const urlField = document.getElementById('urlInput');
+
+            const titleInput = titleField.value;
+            const descriptionInput = descField.value;
+            const urlInput = urlField.value || 'yourwebsite.com';
+
+            document.querySelector('.serp-preview-title').innerText = titleInput || 'Your Title Will Appear Here';
+            document.querySelector('.serp-preview-description').innerText = descriptionInput || 'Your meta description will appear here for live preview.';
+            document.querySelector('.serp-preview-url').innerText = urlInput;
+
+            const titleCount = titleInput.length;
+            const descriptionCount = descriptionInput.length;
+
+            const titleCountElement = document.getElementById('titleCount');
+            const descriptionCountElement = document.getElementById('descriptionCount');
+
+            titleCountElement.innerText = `Title Length: ${titleCount} / 60`;
+            descriptionCountElement.innerText = `Description Length: ${descriptionCount} / 160`;
+
+            if (titleCount > 60) {
+                titleCountElement.classList.add('over-limit');
+                titleField.style.borderColor = 'red';
+                titleField.style.color = 'red';
+            } else {
+                titleCountElement.classList.remove('over-limit');
+                titleField.style.borderColor = '#ccc';
+                titleField.style.color = 'black';
+            }
+
+            if (descriptionCount > 160) {
+                descriptionCountElement.classList.add('over-limit');
+                descField.style.borderColor = 'red';
+                descField.style.color = 'red';
+            } else {
+                descriptionCountElement.classList.remove('over-limit');
+                descField.style.borderColor = '#ccc';
+                descField.style.color = 'black';
+            }
+        }
+    </script>
+</body>
+</html>
