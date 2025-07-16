@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50% Editable Persistent Page Without Frames</title>
+    <style>
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: blue;
+            margin: 0;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .editor {
+            background: white;
+            width: 48%;
+            height: 95%;
+            margin: 1%;
+            padding: 10px;
+            overflow-y: auto;
+            outline: none;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="editor1" class="editor" contenteditable="true"></div>
+    <div id="editor2" class="editor" contenteditable="true"></div>
+
+    <script>
+        const editor1 = document.getElementById('editor1');
+        const editor2 = document.getElementById('editor2');
+
+        editor1.innerHTML = localStorage.getItem('frame1') || '';
+        editor2.innerHTML = localStorage.getItem('frame2') || '';
+
+        editor1.addEventListener('input', () => {
+            localStorage.setItem('frame1', editor1.innerHTML);
+        });
+
+        editor2.addEventListener('input', () => {
+            localStorage.setItem('frame2', editor2.innerHTML);
+        });
+    </script>
+</body>
+</html>
