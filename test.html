@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>50% Editable Persistent Page Without Frames</title>
+    <title>50% Editable Persistent Page with Hyperlinks</title>
     <style>
         body {
             display: flex;
@@ -24,6 +24,10 @@
             outline: none;
             box-sizing: border-box;
         }
+        a {
+            color: blue;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -43,6 +47,19 @@
 
         editor2.addEventListener('input', () => {
             localStorage.setItem('frame2', editor2.innerHTML);
+        });
+
+        // Enable pasting hyperlinks correctly
+        document.querySelectorAll('.editor').forEach(editor => {
+            editor.addEventListener('paste', function(e) {
+                e.preventDefault();
+                let text = (e.clipboardData || window.clipboardData).getData('text');
+                if (text.startsWith('http://') || text.startsWith('https://')) {
+                    document.execCommand('insertHTML', false, '<a href="' + text + '" target="_blank">' + text + '</a>');
+                } else {
+                    document.execCommand('insertText', false, text);
+                }
+            });
         });
     </script>
 </body>
