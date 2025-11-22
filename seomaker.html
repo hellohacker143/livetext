@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Live Preview Heading + Bullet Converter</title>
+    <title>Live Preview - Paragraph + Number List + Bullet + Headings</title>
     <style>
         body {
             font-family: Arial;
@@ -26,6 +26,7 @@
             line-height: 1.7;
             height: 400px;
             overflow-y: auto;
+            white-space: normal;
         }
         #wordCount {
             margin-top: 10px;
@@ -50,17 +51,15 @@
 </head>
 <body>
 
-<h2>Live Preview - Auto Converter (H1 / H2 / H3 + Bullet Points)</h2>
+<h2>Live Preview - Auto Converter</h2>
 
 <div class="container">
-    <!-- Left Panel -->
     <div style="flex: 1;">
         <textarea id="input" placeholder="Type or paste your content here..."></textarea>
         <div id="wordCount">Words: 0</div>
         <button id="copyBtn">Copy Output</button>
     </div>
 
-    <!-- Right Panel -->
     <div style="flex: 1;">
         <div id="output">Live preview will appear here...</div>
     </div>
@@ -71,64 +70,87 @@ document.getElementById("input").addEventListener("input", convert);
 
 function convert() {
     let raw = document.getElementById("input").value.trim();
-
-    // Update word count
     let words = raw.split(/\s+/).filter(w => w.length > 0).length;
     document.getElementById("wordCount").innerText = "Words: " + words;
 
     let lines = raw.split("\n");
 
     let outputHTML = "";
-    let bullets = [];
+    let subBullets = [];
+    let lastWasParagraph = false;
 
     lines.forEach(line => {
         line = line.trim();
-        if (!line) return;
 
+        // DO NOTHING for empty lines (prevents extra spacing)
+        if (!line) {
+            return;
+        }
+
+        // H1
         if (line.match(/^H1:/i)) {
-            if (bullets.length > 0) {
-                outputHTML += "<ul>" + bullets.join("") + "</ul>";
-                bullets = [];
-            }
-            outputHTML += "<h1>" + line.replace(/H1:\s*/i, "") + "</h1>";
-        } 
-        else if (line.match(/^H2:/i)) {
-            if (bullets.length > 0) {
-                outputHTML += "<ul>" + bullets.join("") + "</ul>";
-                bullets = [];
-            }
-            outputHTML += "<h2>" + line.replace(/H2:\s*/i, "") + "</h2>";
+            flushBullets();
+            outputHTML += `<h1>${line.replace(/H1:\s*/i, "")}</h1>`;
+            return;
         }
-        else if (line.match(/^H3:/i)) {
-            if (bullets.length > 0) {
-                outputHTML += "<ul>" + bullets.join("") + "</ul>";
-                bullets = [];
-            }
-            outputHTML += "<h3>" + line.replace(/H3:\s*/i, "") + "</h3>";
+
+        // H2
+        if (line.match(/^H2:/i)) {
+            flushBullets();
+            outputHTML += `<h2>${line.replace(/H2:\s*/i, "")}</h2>`;
+            return;
         }
-        else {
-            bullets.push("<li>" + line + "</li>");
+
+        // H3
+        if (line.match(/^H3:/i)) {
+            flushBullets();
+            outputHTML += `<h3>${line.replace(/H3:\s*/i, "")}</h3>`;
+            return;
         }
+
+        // Numbered lines (1. 2. 3. etc)
+        if (line.match(/^\d+\./)) {
+            flushBullets();
+            outputHTML += `<p><b>${line}</b></p>`;
+            lastWasParagraph = true;
+            return;
+        }
+
+        // Short lines = Sub bullets
+        if (!lastWasParagraph && line.length < 80) {
+            subBullets.push(`<li>${line}</li>`);
+            return;
+        }
+
+        // Paragraph (normal text)
+        flushBullets();
+        outputHTML += `<p>${line}</p>`;
+        lastWasParagraph = true;
     });
 
-    if (bullets.length > 0) {
-        outputHTML += "<ul>" + bullets.join("") + "</ul>";
+    flushBullets();
+
+    function flushBullets() {
+        if (subBullets.length > 0) {
+            outputHTML += "<ul>" + subBullets.join("") + "</ul>";
+            subBullets = [];
+        }
+        lastWasParagraph = false;
     }
 
-    document.getElementById("output").innerHTML = outputHTML || "Live preview will appear here...";
+    document.getElementById("output").innerHTML =
+        outputHTML || "Live preview will appear here...";
 }
 
-// Copy button
+// Copy
 document.getElementById("copyBtn").addEventListener("click", function () {
     let outputText = document.getElementById("output").innerHTML;
-
     let temp = document.createElement("textarea");
     temp.value = outputText;
     document.body.appendChild(temp);
     temp.select();
     document.execCommand("copy");
     document.body.removeChild(temp);
-
     alert("Output copied!");
 });
 </script>
