@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Website Source Viewer</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #eef2f3;
+    margin: 0;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  }
+
+  input, button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  input {
+    border: 1px solid #ccc;
+  }
+
+  .btn {
+    background: #0066ff;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+
+  .btn:hover { opacity: 0.85; }
+
+  #copyBtn {
+    background: #00b96d;
+    margin-top: 10px;
+    display: none;
+  }
+
+  #output {
+    margin-top: 20px;
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 15px;
+    overflow-x: auto;
+    max-height: 70vh;
+  }
+
+  .img-box {
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    border-radius: 10px;
+  }
+
+  .img-box img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .copy-img-btn {
+    background: #00b96d;
+    color: white;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 15px; }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <h2>Full Website Source Viewer (HTML + CSS + JS + Images)</h2>
+
+  <input id="urlInput" type="text" placeholder="Paste any URL…">
+
+  <button class="btn" onclick="showHTML()">Get HTML Source</button>
+  <button class="btn" onclick="showCSS()">Get CSS Source</button>
+  <button class="btn" onclick="showJS()">Get JavaScript</button>
+  <button class="btn" onclick="showImages()">Get Images</button>
+
+  <button id="copyBtn" class="btn" onclick="copyCode()">Copy Code</button>
+
+  <div id="output">Code will appear here…</div>
+</div>
+
+<script>
+// Fetch bypassing CORS
+async function fetchSite(url) {
+  const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(url));
+  return await res.json();
+}
+
+function enableCopy() {
+  document.getElementById("copyBtn").style.display = "block";
+}
+
+// COPY BUTTON
+function copyCode() {
+  const text = document.getElementById("output").innerText;
+  navigator.clipboard.writeText(text);
+  alert("Copied!");
+}
+
+// -------------------- HTML --------------------
+async function showHTML() {
+  const url = document.getElementById("urlInput").value;
+  const out = document.getElementById("output");
+  if (!url) return out.innerHTML = "Enter a URL!";
+  enableCopy();
+
+  out.innerHTML = "Loading HTML…";
+
+  try {
+    const data = await fetchSite(url);
+    out.innerText = data.contents.replace(/></g, ">\n<").trim();
+  } catch {
+    out.innerText = "Failed to load HTML!";
+  }
+}
+
+// -------------------- CSS --------------------
+async function showCSS() {
+  const url = document.getElementById("urlInput").value;
+  const out = document.getElementById("output");
+  if (!url) return out.innerHTML = "Enter a URL!";
+  enableCopy();
+
+  out.innerHTML = "Loading CSS…";
+
+  try {
+    const data = await fetchSite(url);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data.contents, "text/html");
+
+    let cssText = "";
+
+    // External CSS
+    const links = doc.querySelectorAll("link[rel='stylesheet']");
+    for (let link of links) {
+      cssText += `/* External CSS: ${link.href} */\n`;
+      const cssFile = await fetchSite(link.href);
+      cssText += cssFile.contents + "\n\n";
+    }
+
+    // Inline CSS
+    doc.querySelectorAll("style").forEach(s => {
+      cssText += "/* Inline CSS */\n" + s.innerText + "\n\n";
+    });
+
+    out.innerText = cssText || "No CSS found.";
+  } catch {
+    out.innerText = "Failed to load CSS!";
+  }
+}
+
+// -------------------- JAVASCRIPT --------------------
+async function showJS() {
+  const url = document.getElementById("urlInput").value;
+  const out = document.getElementById("output");
+  if (!url) return out.innerHTML = "Enter a URL!";
+  enableCopy();
+
+  out.innerHTML = "Loading JavaScript…";
+
+  try {
+    const data = await fetchSite(url);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data.contents, "text/html");
+
+    let jsText = "";
+
+    // External JS
+    const scripts = doc.querySelectorAll("script[src]");
+    for (const s of scripts) {
+      jsText += `/* External JS: ${s.src} */\n`;
+      const jsFile = await fetchSite(s.src);
+      jsText += jsFile.contents + "\n\n";
+    }
+
+    // Inline JS
+    doc.querySelectorAll("script:not([src])").forEach(sc => {
+      jsText += "/* Inline JS */\n" + sc.innerText + "\n\n";
+    });
+
+    out.innerText = jsText || "No JavaScript found.";
+  } catch {
+    out.innerText = "Failed to load JavaScript!";
+  }
+}
+
+// -------------------- IMAGES --------------------
+async function showImages() {
+  const url = document.getElementById("urlInput").value;
+  const out = document.getElementById("output");
+
+  if (!url) return out.innerHTML = "Enter URL!";
+  out.innerHTML = "Loading images…";
+
+  try {
+    const data = await fetchSite(url);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data.contents, "text/html");
+
+    const imgs = doc.querySelectorAll("img");
+    if (imgs.length === 0) return out.innerHTML = "No images found.";
+
+    out.innerHTML = "";
+
+    imgs.forEach(img => {
+      let src = img.src;
+
+      out.innerHTML += `
+        <div class="img-box">
+          <img src="${src}" alt="Image">
+          <p>${src}</p>
+          <button class="copy-img-btn" onclick="navigator.clipboard.writeText('${src}'); alert('Image URL Copied!');">Copy Image URL</button>
+        </div>
+      `;
+    });
+
+  } catch {
+    out.innerHTML = "Failed to load images!";
+  }
+}
+</script>
+
+</body>
+</html>
