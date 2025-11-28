@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Markdown Here - Responsive</title>
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: row;
+    }
+
+    textarea {
+        width: 50%;
+        padding: 15px;
+        font-size: 18px;
+        outline: none;
+        border: none;
+        background: #1e1e1e;
+        color: #fff;
+        resize: none;
+    }
+
+    #right {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        color: #000;
+    }
+
+    #output {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ccc;
+    }
+
+    button {
+        padding: 15px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    /* ---------- Responsive CSS ---------- */
+    @media (max-width: 768px) {
+        body {
+            flex-direction: column; /* stacked layout in mobile */
+        }
+        textarea, #right {
+            width: 100%;
+            height: 50vh;
+        }
+        #output {
+            height: calc(100% - 60px);
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+<textarea id="markdown" placeholder="Type Markdown here...">
+# Responsive Markdown Editor
+
+- Editor on left (desktop) / top (mobile)
+- Output on right (desktop) / bottom (mobile)
+- Fully responsive layout
+</textarea>
+
+<div id="right">
+    <div id="output"></div>
+    <button onclick="copyText()">Copy Output</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+function renderOutput(){
+    const text = document.getElementById("markdown").value;
+    document.getElementById("output").innerHTML = marked.parse(text);
+}
+
+document.getElementById("markdown").addEventListener("input", renderOutput);
+renderOutput();
+
+function copyText() {
+    const outputText = document.getElementById("output").innerText;
+    navigator.clipboard.writeText(outputText)
+        .then(() => alert("Output Copied!"));
+}
+</script>
+
+</body>
+</html>
