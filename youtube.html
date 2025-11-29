@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Multi YouTube Auto Player</title>
+<style>
+body {
+  background:#111;
+  color:#fff;
+  font-family:Arial;
+  padding:20px;
+}
+.box {
+  background:#222;
+  padding:20px;
+  border-radius:15px;
+  width:90%;
+  margin:auto;
+}
+input,button {
+  padding:10px;
+  font-size:16px;
+  border-radius:8px;
+  border:none;
+}
+#url { width:70%; }
+#count { width:60px; text-align:center; }
+
+button {
+  background:red;
+  color:#fff;
+  cursor:pointer;
+}
+button:hover { background:#c60000; }
+
+.screens {
+  margin-top:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  justify-content:center;
+}
+.screen {
+  width:300px;
+  height:180px;
+  background:#000;
+  border-radius:10px;
+  overflow:hidden;
+}
+h2 {text-align:center;}
+</style>
+</head>
+
+<body>
+<div class="box">
+  <h2>Auto Play YouTube Screens</h2>
+
+  <input type="text" id="url" placeholder="Paste YouTube/Shorts link here">
+  <input type="number" id="count" value="5" min="1">
+  <button onclick="createScreens()">Auto Play</button>
+
+  <div class="screens" id="screens"></div>
+</div>
+
+<script>
+function convertURL(url) {
+  if (url.includes("shorts")) {
+    url = url.replace("shorts/", "embed/");
+    return url + "?autoplay=1&mute=1";
+  }
+  if (url.includes("watch?v=")) {
+    let id = url.split("v=")[1];
+    return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1";
+  }
+  return url;
+}
+
+function createScreens() {
+  const link = document.getElementById('url').value;
+  const count = parseInt(document.getElementById('count').value);
+
+  if(!link) return alert("Paste link first!");
+
+  const embed = convertURL(link);
+  const area = document.getElementById('screens');
+  area.innerHTML = "";
+
+  for(let i=0; i<count; i++) {
+    const div = document.createElement("div");
+    div.className="screen";
+    div.innerHTML = `<iframe width="100%" height="100%" src="${embed}" allow="autoplay"></iframe>`;
+    area.appendChild(div);
+  }
+}
+</script>
+
+</body>
+</html>
