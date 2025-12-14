@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Face Mesh Recorder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  background:black;
+  overflow:hidden;
+}
+video{ display:none; }
+canvas{
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+/* Controls */
+#controls{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+}
+button{
+  padding:14px 22px;
+  font-size:16px;
+  margin:0 8px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+#recordBtn{background:red;color:white;}
+#downloadBtn{background:#22c55e;color:black;display:none;}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+</head>
+
+<body>
+
+<video id="video" autoplay muted playsinline></video>
+<canvas id="canvas"></canvas>
+
+<div id="controls">
+  <button id="recordBtn">⏺ Record</button>
+  <button id="downloadBtn">⬇ Download</button>
+</div>
+
+<script>
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const recordBtn = document.getElementById("recordBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+
+function resize(){
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+window.onresize = resize;
+
+/* ---------- FACE MESH ---------- */
+const faceMesh = new FaceMesh({
+  locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
+});
+
+faceMesh.setOptions({
+  maxNumFaces:1,
+  refineLandmarks:true,
+  minDetectionConfidence:0.6,
+  minTrackingConfidence:0.6
+});
+
+function draw(points){
+  ctx.beginPath();
+  points.forEach((p,i)=>{
+    const x=p.x*canvas.width;
+    const y=p.y*canvas.height;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.stroke();
+}
+
+faceMesh.onResults(res=>{
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(!res.multiFaceLandmarks) return;
+
+  const lm=res.multiFaceLandmarks[0];
+  ctx.strokeStyle="orange";
+  ctx.lineWidth=2;
+  ctx.shadowBlur=15;
+  ctx.shadowColor="orange";
+
+  draw([
+    lm[10],lm[338],lm[297],lm[332],lm[284],lm[251],
+    lm[389],lm[356],lm[454],lm[323],lm[361],lm[288],
+    lm[397],lm[365],lm[379],lm[378],lm[400],lm[377],
+    lm[152],lm[148],lm[176],lm[149],lm[150],lm[136],
+    lm[172],lm[58],lm[132],lm[93],lm[234],lm[127],
+    lm[162],lm[21],lm[54],lm[103],lm[67],lm[109]
+  ]);
+
+  draw([lm[33],lm[133],lm[159]]);
+  draw([lm[362],lm[263],lm[386]]);
+  draw([lm[61],lm[291],lm[308]]);
+});
+
+/* ---------- CAMERA ---------- */
+const camera = new Camera(video,{
+  onFrame: async()=>{ await faceMesh.send({image:video}); },
+  width:1280,
+  height:720
+});
+camera.start();
+
+/* ---------- RECORDING ---------- */
+let recorder, chunks=[], recordedBlob;
+let recording=false;
+
+recordBtn.onclick = async ()=>{
+  if(!recording){
+    // START
+    chunks=[];
+    const canvasStream = canvas.captureStream(30);
+    const audioStream = await navigator.mediaDevices.getUserMedia({audio:true});
+
+    const stream = new MediaStream([
+      ...canvasStream.getVideoTracks(),
+      ...audioStream.getAudioTracks()
+    ]);
+
+    recorder = new MediaRecorder(stream,{mimeType:"video/webm"});
+    recorder.ondataavailable = e=>chunks.push(e.data);
+    recorder.start();
+
+    recordBtn.innerText="⏹ Stop";
+    recordBtn.style.background="gray";
+    downloadBtn.style.display="none";
+    recording=true;
+  } else {
+    // STOP
+    recorder.stop();
+    recorder.onstop=()=>{
+      recordedBlob = new Blob(chunks,{type:"video/webm"});
+      downloadBtn.style.display="inline-block";
+    };
+    recordBtn.innerText="⏺ Record";
+    recordBtn.style.background="red";
+    recording=false;
+  }
+};
+
+downloadBtn.onclick = ()=>{
+  const url=URL.createObjectURL(recordedBlob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="face-mesh-video.webm";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+</script>
+
+</body>
+</html>
