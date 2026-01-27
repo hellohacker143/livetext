@@ -1,8 +1,9 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Multi Video Speed Player</title>
+<title>Multi YouTube Auto Player</title>
 
 <style>
 body{
@@ -18,11 +19,13 @@ body{
     border-radius:16px;
     max-width:1200px;
     margin:auto;
+    box-shadow:0 0 30px rgba(0,0,0,0.6);
 }
 
 h2{
     text-align:center;
     color:#ef4444;
+    margin-bottom:20px;
 }
 
 .controls{
@@ -32,40 +35,47 @@ h2{
     flex-wrap:wrap;
 }
 
-input, button{
+input{
     padding:10px;
+    font-size:15px;
     border-radius:8px;
     border:none;
 }
 
-#url{ width:40%; }
+#url{ width:60%; }
 #count{ width:70px; text-align:center; }
-#speed{ width:90px; }
 
 button{
     background:#ef4444;
-    color:white;
+    color:#fff;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
     cursor:pointer;
+    font-size:15px;
 }
+button:hover{ background:#dc2626; }
 
+/* ===== GRID ===== */
 .screens{
-    margin-top:20px;
+    margin-top:25px;
     display:grid;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns:repeat(4, 1fr); /* 4 columns */
     gap:10px;
 }
 
 .screen{
-    background:black;
+    background:#000;
     aspect-ratio:16/9;
     border-radius:10px;
     overflow:hidden;
+    border:1px solid #1e293b;
 }
 
-iframe, video{
+iframe{
     width:100%;
     height:100%;
-    object-fit:cover;
+    border:none;
 }
 </style>
 </head>
@@ -73,75 +83,52 @@ iframe, video{
 <body>
 
 <div class="box">
-<h2>Multi Speed Auto Player</h2>
+    <h2>Multi YouTube Auto-Play (Mini Screens)</h2>
 
-<div class="controls">
-    <input id="url" placeholder="YouTube URL (max 2×)">
-    <input type="file" id="file" accept="video/*">
-    <input id="speed" type="number" value="30">
-    <input id="count" type="number" value="12" min="1" max="40">
-    <button onclick="play()">PLAY</button>
-</div>
+    <div class="controls">
+        <input type="text" id="url" placeholder="Paste YouTube / Shorts URL">
+        <input type="number" id="count" value="20" min="1" max="40">
+        <button onclick="createScreens()">AUTO PLAY</button>
+    </div>
 
-<div class="screens" id="screens"></div>
+    <div class="screens" id="screens"></div>
 </div>
 
 <script>
-function getYouTubeEmbed(url){
-    let id="";
-    if(url.includes("shorts/")) id=url.split("shorts/")[1].split("?")[0];
-    else if(url.includes("watch?v=")) id=url.split("v=")[1].split("&")[0];
-    else if(url.includes("youtu.be/")) id=url.split("youtu.be/")[1].split("?")[0];
-
-    if(!id) return null;
-
-    return "https://www.youtube.com/embed/" + id +
-    "?autoplay=1&mute=1&playsinline=1";
+function convertURL(url){
+    if(url.includes("shorts")){
+        return url.replace("shorts/","embed/") + "?autoplay=1&mute=1&playsinline=1";
+    }
+    if(url.includes("watch?v=")){
+        const id = url.split("v=")[1].split("&")[0];
+        return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&playsinline=1";
+    }
+    return url;
 }
 
-function play(){
-    const url=document.getElementById("url").value.trim();
-    const file=document.getElementById("file").files[0];
-    const speed=parseFloat(document.getElementById("speed").value);
-    const count=parseInt(document.getElementById("count").value);
-    const box=document.getElementById("screens");
+function createScreens(){
+    const link = document.getElementById("url").value.trim();
+    const count = parseInt(document.getElementById("count").value);
+    const container = document.getElementById("screens");
 
-    box.innerHTML="";
-
-    // 🎥 LOCAL VIDEO → 30× SPEED
-    if(file){
-        const src=URL.createObjectURL(file);
-        for(let i=0;i<count;i++){
-            const d=document.createElement("div");
-            d.className="screen";
-            d.innerHTML=`
-                <video autoplay muted loop playsinline>
-                    <source src="${src}">
-                </video>`;
-            box.appendChild(d);
-        }
-        setTimeout(()=>{
-            document.querySelectorAll("video")
-            .forEach(v=>v.playbackRate=speed);
-        },200);
+    if(!link){
+        alert("Paste YouTube link first!");
+        return;
     }
 
-    // 📺 YOUTUBE → MAX 2× ONLY
-    else if(url){
-        const embed=getYouTubeEmbed(url);
-        if(!embed){ alert("Invalid YouTube URL"); return; }
+    container.innerHTML="";
+    const embedURL = convertURL(link);
 
-        for(let i=0;i<count;i++){
-            const d=document.createElement("div");
-            d.className="screen";
-            d.innerHTML=`<iframe src="${embed}" allow="autoplay"></iframe>`;
-            box.appendChild(d);
-        }
-
-        alert("⚠️ YouTube speed is limited to 2× max");
-    }
-    else{
-        alert("Add YouTube link or video file");
+    for(let i=0;i<count;i++){
+        const div = document.createElement("div");
+        div.className="screen";
+        div.innerHTML = `
+            <iframe 
+              src="${embedURL}" 
+              allow="autoplay; encrypted-media"
+              allowfullscreen>
+            </iframe>`;
+        container.appendChild(div);
     }
 }
 </script>
