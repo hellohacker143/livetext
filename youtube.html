@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Multi Video Auto Player</title>
+<meta charset="UTF-8">
+<title>Multi YouTube Auto Player</title>
 
 <style>
 body{
@@ -40,7 +41,7 @@ input, button{
     border:none;
 }
 
-#url{ width:45%; }
+#url{ width:55%; }
 #count{ width:70px; text-align:center; }
 
 button{
@@ -66,10 +67,10 @@ button:hover{ background:#dc2626; }
     border:1px solid #1e293b;
 }
 
-iframe, video{
+iframe{
     width:100%;
     height:100%;
-    object-fit:cover;
+    border:none;
 }
 </style>
 </head>
@@ -77,11 +78,10 @@ iframe, video{
 <body>
 
 <div class="box">
-    <h2>Multi YouTube / Video Auto-Play</h2>
+    <h2>Multi YouTube Auto-Play Player</h2>
 
     <div class="controls">
-        <input type="text" id="url" placeholder="Paste YouTube / Shorts URL">
-        <input type="file" id="file" accept="video/*">
+        <input type="text" id="url" placeholder="Paste YouTube / Shorts / youtu.be URL">
         <input type="number" id="count" value="12" min="1" max="40">
         <button onclick="createScreens()">AUTO PLAY</button>
     </div>
@@ -91,58 +91,58 @@ iframe, video{
 
 <script>
 function convertURL(url){
-    if(url.includes("shorts")){
-        return url.replace("shorts/","embed/") + "?autoplay=1&mute=1&playsinline=1&loop=1";
+    let videoId = "";
+
+    // Shorts URL
+    if(url.includes("youtube.com/shorts/")){
+        videoId = url.split("shorts/")[1].split("?")[0];
     }
-    if(url.includes("watch?v=")){
-        const id = url.split("v=")[1].split("&")[0];
-        return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&playsinline=1&loop=1";
+    // Normal watch URL
+    else if(url.includes("watch?v=")){
+        videoId = url.split("v=")[1].split("&")[0];
     }
+    // youtu.be URL ✅
+    else if(url.includes("youtu.be/")){
+        videoId = url.split("youtu.be/")[1].split("?")[0];
+    }
+
+    if(videoId){
+        return "https://www.youtube.com/embed/" + videoId +
+        "?autoplay=1&mute=1&playsinline=1&loop=1&playlist=" + videoId;
+    }
+
     return null;
 }
 
 function createScreens(){
     const link = document.getElementById("url").value.trim();
-    const file = document.getElementById("file").files[0];
     const count = parseInt(document.getElementById("count").value);
     const container = document.getElementById("screens");
 
-    if(!link && !file){
-        alert("Add YouTube link OR select a video file!");
+    if(!link){
+        alert("Paste YouTube link first!");
+        return;
+    }
+
+    const embedURL = convertURL(link);
+    if(!embedURL){
+        alert("Invalid YouTube URL!");
         return;
     }
 
     container.innerHTML = "";
 
-    if(file){
-        const videoURL = URL.createObjectURL(file);
-
-        for(let i=0;i<count;i++){
-            const div = document.createElement("div");
-            div.className = "screen";
-            div.innerHTML = `
-                <video autoplay muted loop playsinline>
-                    <source src="${videoURL}">
-                </video>
-            `;
-            container.appendChild(div);
-        }
-    } 
-    else {
-        const embedURL = convertURL(link);
-
-        for(let i=0;i<count;i++){
-            const div = document.createElement("div");
-            div.className="screen";
-            div.innerHTML = `
-                <iframe 
-                    src="${embedURL}" 
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen>
-                </iframe>
-            `;
-            container.appendChild(div);
-        }
+    for(let i=0;i<count;i++){
+        const div = document.createElement("div");
+        div.className = "screen";
+        div.innerHTML = `
+            <iframe
+                src="${embedURL}"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        `;
+        container.appendChild(div);
     }
 }
 </script>
