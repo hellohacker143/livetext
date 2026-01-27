@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Multi YouTube Auto Player</title>
+<title>Multi Video Auto Player</title>
 
 <style>
 body{
@@ -33,32 +33,28 @@ h2{
     flex-wrap:wrap;
 }
 
-input{
+input, button{
     padding:10px;
     font-size:15px;
     border-radius:8px;
     border:none;
 }
 
-#url{ width:60%; }
+#url{ width:45%; }
 #count{ width:70px; text-align:center; }
 
 button{
     background:#ef4444;
     color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
     cursor:pointer;
-    font-size:15px;
 }
 button:hover{ background:#dc2626; }
 
-/* ===== GRID ===== */
+/* GRID */
 .screens{
     margin-top:25px;
     display:grid;
-    grid-template-columns:repeat(4, 1fr); /* 4 columns */
+    grid-template-columns:repeat(4, 1fr);
     gap:10px;
 }
 
@@ -70,10 +66,10 @@ button:hover{ background:#dc2626; }
     border:1px solid #1e293b;
 }
 
-iframe{
+iframe, video{
     width:100%;
     height:100%;
-    border:none;
+    object-fit:cover;
 }
 </style>
 </head>
@@ -81,11 +77,12 @@ iframe{
 <body>
 
 <div class="box">
-    <h2>Multi YouTube Auto-Play (Mini Screens)</h2>
+    <h2>Multi YouTube / Video Auto-Play</h2>
 
     <div class="controls">
         <input type="text" id="url" placeholder="Paste YouTube / Shorts URL">
-        <input type="number" id="count" value="20" min="1" max="40">
+        <input type="file" id="file" accept="video/*">
+        <input type="number" id="count" value="12" min="1" max="40">
         <button onclick="createScreens()">AUTO PLAY</button>
     </div>
 
@@ -95,38 +92,57 @@ iframe{
 <script>
 function convertURL(url){
     if(url.includes("shorts")){
-        return url.replace("shorts/","embed/") + "?autoplay=1&mute=1&playsinline=1";
+        return url.replace("shorts/","embed/") + "?autoplay=1&mute=1&playsinline=1&loop=1";
     }
     if(url.includes("watch?v=")){
         const id = url.split("v=")[1].split("&")[0];
-        return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&playsinline=1";
+        return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&playsinline=1&loop=1";
     }
-    return url;
+    return null;
 }
 
 function createScreens(){
     const link = document.getElementById("url").value.trim();
+    const file = document.getElementById("file").files[0];
     const count = parseInt(document.getElementById("count").value);
     const container = document.getElementById("screens");
 
-    if(!link){
-        alert("Paste YouTube link first!");
+    if(!link && !file){
+        alert("Add YouTube link OR select a video file!");
         return;
     }
 
-    container.innerHTML="";
-    const embedURL = convertURL(link);
+    container.innerHTML = "";
 
-    for(let i=0;i<count;i++){
-        const div = document.createElement("div");
-        div.className="screen";
-        div.innerHTML = `
-            <iframe 
-              src="${embedURL}" 
-              allow="autoplay; encrypted-media"
-              allowfullscreen>
-            </iframe>`;
-        container.appendChild(div);
+    if(file){
+        const videoURL = URL.createObjectURL(file);
+
+        for(let i=0;i<count;i++){
+            const div = document.createElement("div");
+            div.className = "screen";
+            div.innerHTML = `
+                <video autoplay muted loop playsinline>
+                    <source src="${videoURL}">
+                </video>
+            `;
+            container.appendChild(div);
+        }
+    } 
+    else {
+        const embedURL = convertURL(link);
+
+        for(let i=0;i<count;i++){
+            const div = document.createElement("div");
+            div.className="screen";
+            div.innerHTML = `
+                <iframe 
+                    src="${embedURL}" 
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen>
+                </iframe>
+            `;
+            container.appendChild(div);
+        }
     }
 }
 </script>
