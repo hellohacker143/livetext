@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Multi YouTube Auto Player</title>
+<title>Multi YouTube Auto Player PRO</title>
 
 <style>
 body{
@@ -15,7 +15,7 @@ body{
     background:#020617;
     padding:20px;
     border-radius:16px;
-    max-width:1200px;
+    max-width:1300px;
     margin:auto;
     box-shadow:0 0 30px rgba(0,0,0,0.6);
 }
@@ -26,38 +26,18 @@ h2{
     margin-bottom:20px;
 }
 
-.controls{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-input{
+textarea{
+    width:100%;
+    height:90px;
     padding:10px;
-    font-size:15px;
-    border-radius:8px;
+    border-radius:10px;
     border:none;
+    font-size:14px;
 }
-
-#url{ width:60%; }
-#count{ width:70px; text-align:center; }
-
-button{
-    background:#ef4444;
-    color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:15px;
-}
-button:hover{ background:#dc2626; }
 
 .screens{
     margin-top:25px;
     display:grid;
-    grid-template-columns:repeat(4, 1fr);
     gap:10px;
 }
 
@@ -80,54 +60,74 @@ iframe{
 <body>
 
 <div class="box">
-    <h2>Multi YouTube Auto-Play (Mini Screens)</h2>
+    <h2>Multi YouTube Auto Player PRO</h2>
 
-    <div class="controls">
-        <input type="text" id="url" placeholder="Paste YouTube / Shorts URL">
-        <input type="number" id="count" value="20" min="1" max="40">
-        <button onclick="createScreens()">AUTO PLAY</button>
-    </div>
+    <textarea id="urls" placeholder="Paste multiple YouTube links (one per line)"></textarea>
 
     <div class="screens" id="screens"></div>
 </div>
 
 <script>
+
+// Convert URL → Embed
 function convertURL(url){
     if(url.includes("shorts")){
-        return url.replace("shorts/","embed/") + "?autoplay=1&mute=1&playsinline=1";
+        const id = url.split("shorts/")[1];
+        return "https://www.youtube.com/embed/" + id +
+        "?autoplay=1&mute=1&loop=1&playlist=" + id;
     }
+
     if(url.includes("watch?v=")){
         const id = url.split("v=")[1].split("&")[0];
-        return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&playsinline=1";
+        return "https://www.youtube.com/embed/" + id +
+        "?autoplay=1&mute=1&loop=1&playlist=" + id;
     }
+
     return url;
 }
 
+// Smart Grid Columns
+function getColumns(count){
+    if(count <= 4) return 2;
+    if(count <= 12) return 3;
+    if(count <= 24) return 4;
+    return 5;
+}
+
+// Create Screens
 function createScreens(){
-    const link = document.getElementById("url").value.trim();
-    const count = parseInt(document.getElementById("count").value);
+    const raw = document.getElementById("urls").value.trim();
+    if(!raw) return;
+
+    const links = raw.split("\n").filter(l => l.trim() !== "");
     const container = document.getElementById("screens");
 
-    if(!link){
-        alert("Paste YouTube link first!");
-        return;
-    }
-
     container.innerHTML="";
-    const embedURL = convertURL(link);
 
-    for(let i=0;i<count;i++){
+    const cols = getColumns(links.length);
+    container.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+
+    links.forEach(link=>{
+        const embed = convertURL(link.trim());
+
         const div = document.createElement("div");
         div.className="screen";
+
         div.innerHTML = `
-            <iframe 
-              src="${embedURL}" 
-              allow="autoplay; encrypted-media"
-              allowfullscreen>
-            </iframe>`;
+        <iframe src="${embed}"
+        allow="autoplay; encrypted-media"
+        allowfullscreen></iframe>
+        `;
+
         container.appendChild(div);
-    }
+    });
 }
+
+// AUTO START when paste
+document.getElementById("urls").addEventListener("input", ()=>{
+    createScreens();
+});
+
 </script>
 
 </body>
