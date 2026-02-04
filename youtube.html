@@ -54,7 +54,6 @@ button{
 }
 button:hover{ background:#dc2626; }
 
-/* GRID */
 .screens{
     margin-top:25px;
     display:grid;
@@ -93,25 +92,17 @@ iframe{
 </div>
 
 <script>
-
-// Convert YouTube URL → Embed URL
 function convertURL(url){
     if(url.includes("shorts")){
-        return url.replace("shorts/","embed/") +
-        "?autoplay=1&mute=1&loop=1&playlist=" +
-        url.split("shorts/")[1];
+        return url.replace("shorts/","embed/") + "?autoplay=1&mute=1&playsinline=1";
     }
-
     if(url.includes("watch?v=")){
         const id = url.split("v=")[1].split("&")[0];
-        return "https://www.youtube.com/embed/" + id +
-        "?autoplay=1&mute=1&loop=1&playlist=" + id;
+        return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&playsinline=1";
     }
-
     return url;
 }
 
-// Create Multiple Screens
 function createScreens(){
     const link = document.getElementById("url").value.trim();
     const count = parseInt(document.getElementById("count").value);
@@ -128,34 +119,15 @@ function createScreens(){
     for(let i=0;i<count;i++){
         const div = document.createElement("div");
         div.className="screen";
-
         div.innerHTML = `
-        <iframe 
-        src="${embedURL}"
-        allow="autoplay; encrypted-media"
-        allowfullscreen>
-        </iframe>`;
-
+            <iframe 
+              src="${embedURL}" 
+              allow="autoplay; encrypted-media"
+              allowfullscreen>
+            </iframe>`;
         container.appendChild(div);
     }
 }
-
-// OPTIONAL: Auto Start if URL already entered
-window.onload = function(){
-    const link = document.getElementById("url").value;
-    if(link){
-        createScreens();
-    }
-}
-
-// OPTIONAL: Auto Refresh Every 10 Minutes (Keeps Playback Active)
-setInterval(()=>{
-    const link = document.getElementById("url").value;
-    if(link){
-        createScreens();
-    }
-}, 600000);
-
 </script>
 
 </body>
