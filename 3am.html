@@ -303,6 +303,8 @@
       border-radius: 12px;
       font-size: 15px;
       outline: none;
+      background: #ffffff;
+      color: #111827;
     }
 
     input:focus,
@@ -312,7 +314,7 @@
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 90px;
       resize: vertical;
     }
 
@@ -378,7 +380,7 @@
       background: #f3f4f6;
       border: 1px solid #d1d5db;
       border-radius: 14px;
-      padding: 14px;
+      padding: 16px;
       margin: 18px 0;
     }
 
@@ -393,6 +395,16 @@
       font-size: 13px;
       color: #6b7280;
       margin-top: 6px;
+    }
+
+    .success-text {
+      color: #047857;
+      font-weight: 700;
+    }
+
+    .danger-text {
+      color: #b91c1c;
+      font-weight: 700;
     }
 
     footer {
@@ -491,9 +503,9 @@
         <p>Order tonight. Receive between 6 AM - 9 AM.</p>
         <ul>
           <li>✅ Fresh milk and bread</li>
-          <li>✅ Daily breakfast essentials</li>
-          <li>✅ Add extra items anytime</li>
-          <li>✅ Auto Google Maps location link</li>
+          <li>✅ Add or remove extra items</li>
+          <li>✅ Auto fetch saved details</li>
+          <li>✅ Default delivery address = live Google Maps location</li>
         </ul>
       </div>
     </section>
@@ -516,9 +528,9 @@
           <p>No confusion. We sell only morning-use items like milk, eggs, bread, fruits, tea and snacks.</p>
         </div>
         <div class="card">
-          <div class="card-icon">📱</div>
-          <h3>WhatsApp Order</h3>
-          <p>Customer details, selected items and Google Maps location go directly to WhatsApp.</p>
+          <div class="card-icon">📍</div>
+          <h3>Live Location Address</h3>
+          <p>The website asks for location permission and sends a Google Maps link as the delivery address.</p>
         </div>
       </div>
     </section>
@@ -622,7 +634,7 @@
     <section class="order-section" id="order">
       <div class="section-title">
         <h2 style="color:#ffffff;">Place Your Morning Order</h2>
-        <p style="color:#d1d5db;">Fill details, add items, auto-add location and send order on WhatsApp.</p>
+        <p style="color:#d1d5db;">Live Google Maps location is used as the default delivery address.</p>
       </div>
 
       <div class="order-box">
@@ -635,16 +647,14 @@
             <option value="7 AM - 8 AM">7 AM - 8 AM</option>
             <option value="8 AM - 9 AM">8 AM - 9 AM</option>
           </select>
-          <input type="text" id="area" placeholder="Area / Locality" />
+          <input type="text" id="landmark" placeholder="Flat / House / Landmark Optional" />
         </div>
 
-        <textarea id="address" placeholder="Full Delivery Address"></textarea>
-
         <div class="location-box">
-          <button class="btn btn-outline" type="button" onclick="getCurrentLocation(true)">📍 Auto Fill Live Location from Google Maps</button>
-          <input type="text" id="locationInput" placeholder="Live location will appear here" readonly style="margin-top: 12px;" />
-          <p class="location-status" id="locationStatus">Location not added yet. Click the button and allow location permission.</p>
-          <p class="small-note">Note: WhatsApp cannot send real-time live tracking from a website. This sends the customer's current Google Maps location link.</p>
+          <button class="btn btn-outline" type="button" onclick="getCurrentLocation(true)">📍 Fetch Live Location Address</button>
+          <input type="text" id="locationInput" placeholder="Google Maps live location will auto-fill here" readonly style="margin-top: 12px;" />
+          <p class="location-status" id="locationStatus">Fetching location automatically. Please allow location permission.</p>
+          <p class="small-note">No separate address box is needed. The Google Maps location link will be sent as the delivery address.</p>
         </div>
 
         <h3 style="margin-top: 20px;">Choose Items</h3>
@@ -667,7 +677,7 @@
         </div>
         <div class="custom-items-list" id="customItemsList"></div>
 
-        <textarea id="note" placeholder="Extra note: quantity, brand preference, subscription request, etc."></textarea>
+        <textarea id="note" placeholder="Extra note optional: quantity, brand preference, subscription request, etc."></textarea>
 
         <button class="btn btn-primary" style="margin-top: 18px; width: 100%;" onclick="sendOrder()">
           Send Order on WhatsApp
@@ -682,10 +692,9 @@
   </footer>
 
   <script>
-    // Your WhatsApp number.
-    // You typed: 766086536. For India, 91 is added before the number.
-    // If your correct number is 7660865536, change this to: 917660865536
-    const SHOP_WHATSAPP_NUMBER = '91766086536';
+    // WhatsApp number for receiving orders.
+    // Current number used: 7660865536 with India country code 91.
+    const SHOP_WHATSAPP_NUMBER = '917660865536';
 
     const customItems = [];
     let locationLink = '';
@@ -752,11 +761,11 @@
       const locationInput = document.getElementById('locationInput');
 
       if (!navigator.geolocation) {
-        status.textContent = 'Location is not supported by this browser. Please type full address manually.';
+        status.innerHTML = '<span class="danger-text">Location is not supported by this browser.</span>';
         return;
       }
 
-      status.textContent = 'Getting live location... Please allow location permission.';
+      status.textContent = 'Fetching live location... Please allow location permission.';
 
       navigator.geolocation.getCurrentPosition(
         function(position) {
@@ -767,29 +776,24 @@
           locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
           locationInput.value = locationLink;
-          status.innerHTML = `Location added successfully: <a href="${locationLink}" target="_blank">Open Google Maps</a>`;
-
-          const addressBox = document.getElementById('address');
-          if (!addressBox.value.includes('Google Maps Location')) {
-            addressBox.value = `${addressBox.value}\nGoogle Maps Location: ${locationLink}`.trim();
-          }
+          status.innerHTML = `<span class="success-text">Live location added.</span> <a href="${locationLink}" target="_blank">Open Google Maps</a>`;
 
           if (showAlert) {
             alert('Live location added successfully.');
           }
         },
         function(error) {
-          let errorMessage = 'Location permission denied or unavailable. Please type full address manually.';
+          let errorMessage = 'Location permission denied or unavailable. Please allow location access.';
 
           if (error.code === 1) {
-            errorMessage = 'Location permission denied. Please allow location access or type address manually.';
+            errorMessage = 'Location permission denied. Please allow location access from browser settings.';
           } else if (error.code === 2) {
-            errorMessage = 'Location unavailable. Please check GPS/location settings.';
+            errorMessage = 'Location unavailable. Please turn on GPS/location services.';
           } else if (error.code === 3) {
             errorMessage = 'Location request timed out. Please try again.';
           }
 
-          status.textContent = errorMessage;
+          status.innerHTML = `<span class="danger-text">${errorMessage}</span>`;
         },
         {
           enableHighAccuracy: true,
@@ -803,8 +807,7 @@
       const details = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
-        area: document.getElementById('area').value.trim(),
-        address: document.getElementById('address').value.trim()
+        landmark: document.getElementById('landmark').value.trim()
       };
 
       localStorage.setItem('morningMartCustomerDetails', JSON.stringify(details));
@@ -819,19 +822,52 @@
         const details = JSON.parse(savedDetails);
         document.getElementById('name').value = details.name || '';
         document.getElementById('phone').value = details.phone || '';
-        document.getElementById('area').value = details.area || '';
-        document.getElementById('address').value = details.address || '';
+        document.getElementById('landmark').value = details.landmark || '';
       } catch (error) {
         console.log('No saved customer details found.');
       }
+    }
+
+    function buildWhatsAppMessage(orderData) {
+      const lines = [];
+
+      lines.push('Hello 3AM Morning Mart,');
+      lines.push('');
+      lines.push('I want to place a morning order.');
+      lines.push('');
+      lines.push('Customer Details:');
+      lines.push(`Name: ${orderData.name}`);
+      lines.push(`Phone: ${orderData.phone}`);
+      lines.push(`Delivery Time: ${orderData.time}`);
+
+      if (orderData.landmark) {
+        lines.push(`Flat / Landmark: ${orderData.landmark}`);
+      }
+
+      lines.push('');
+      lines.push('Delivery Address:');
+      lines.push(orderData.locationLink);
+      lines.push(`Coordinates: ${orderData.locationCoordinates}`);
+      lines.push('');
+      lines.push('Items:');
+      lines.push(orderData.items.join(', '));
+
+      if (orderData.note) {
+        lines.push('');
+        lines.push(`Note: ${orderData.note}`);
+      }
+
+      lines.push('');
+      lines.push('Please confirm my order.');
+
+      return lines.join('\n');
     }
 
     function sendOrder() {
       const name = document.getElementById('name').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const time = document.getElementById('time').value;
-      const area = document.getElementById('area').value.trim();
-      const address = document.getElementById('address').value.trim();
+      const landmark = document.getElementById('landmark').value.trim();
       const note = document.getElementById('note').value.trim();
 
       const selectedItems = Array.from(document.querySelectorAll('.checkboxes input:checked'))
@@ -839,8 +875,14 @@
 
       const finalItems = [...selectedItems, ...customItems];
 
-      if (!name || !phone || !time || !area || !address) {
-        alert('Please fill name, phone number, delivery time, area and address.');
+      if (!name || !phone || !time) {
+        alert('Please fill name, phone number and delivery time.');
+        return;
+      }
+
+      if (!locationLink) {
+        alert('Please allow live location first. Delivery address is taken from Google Maps location.');
+        getCurrentLocation(true);
         return;
       }
 
@@ -851,25 +893,19 @@
 
       saveCustomerDetails();
 
-      const locationText = locationLink ? locationLink : 'Location not shared';
-      const coordinateText = locationCoordinates ? locationCoordinates : 'Coordinates not available';
+      const orderData = {
+        name: name,
+        phone: phone,
+        time: time,
+        landmark: landmark,
+        locationLink: locationLink,
+        locationCoordinates: locationCoordinates,
+        items: finalItems,
+        note: note
+      };
 
-      const message =
-        `Hello 3AM Morning Mart,%0A%0A` +
-        `I want to place a morning order.%0A%0A` +
-        `Customer Details:%0A` +
-        `Name: ${encodeURIComponent(name)}%0A` +
-        `Phone: ${encodeURIComponent(phone)}%0A` +
-        `Delivery Time: ${encodeURIComponent(time)}%0A` +
-        `Area: ${encodeURIComponent(area)}%0A` +
-        `Address: ${encodeURIComponent(address)}%0A%0A` +
-        `Live Google Maps Location:%0A${encodeURIComponent(locationText)}%0A` +
-        `Coordinates: ${encodeURIComponent(coordinateText)}%0A%0A` +
-        `Items:%0A${encodeURIComponent(finalItems.join(', '))}%0A%0A` +
-        `Note: ${encodeURIComponent(note || 'No extra note')}%0A%0A` +
-        `Please confirm my order.`;
-
-      const whatsappURL = `https://wa.me/${SHOP_WHATSAPP_NUMBER}?text=${message}`;
+      const message = buildWhatsAppMessage(orderData);
+      const whatsappURL = `https://wa.me/${SHOP_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
       window.open(whatsappURL, '_blank');
     }
 
@@ -877,8 +913,7 @@
       generateQRCode();
       autoFillSavedCustomerDetails();
 
-      // This tries to get location automatically.
-      // Browser will ask the customer for permission.
+      // Auto fetch location on page load. Browser will ask permission.
       getCurrentLocation(false);
     });
   </script>
