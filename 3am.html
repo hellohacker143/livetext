@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3AM Morning Mart - Fresh Morning Essentials</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #fff9ef;
+      color: #1f2933;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #111827;
+      color: #ffffff;
+      padding: 18px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .logo span {
+      color: #fbbf24;
+    }
+
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      margin-left: 22px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    nav a:hover {
+      color: #fbbf24;
+    }
+
+    .hero {
+      min-height: 88vh;
+      padding: 80px 8%;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 40px;
+      background: linear-gradient(135deg, #fff3d6, #ffffff);
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+
+    .hero h1 span {
+      color: #f59e0b;
+    }
+
+    .hero p {
+      font-size: 18px;
+      max-width: 580px;
+      margin-bottom: 28px;
+      color: #4b5563;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 24px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: #f59e0b;
+      color: #111827;
+    }
+
+    .btn-primary:hover {
+      background: #d97706;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #374151;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+
+    .btn-outline:hover {
+      background: #f3f4f6;
+    }
+
+    .hero-card {
+      background: white;
+      padding: 30px;
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(17, 24, 39, 0.13);
+      text-align: center;
+    }
+
+    .hero-card .emoji {
+      font-size: 80px;
+      margin-bottom: 16px;
+    }
+
+    .hero-card h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .hero-card ul {
+      text-align: left;
+      list-style: none;
+      margin-top: 20px;
+    }
+
+    .hero-card li {
+      background: #fef3c7;
+      margin-bottom: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 600;
+    }
+
+    section {
+      padding: 70px 8%;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .section-title h2 {
+      font-size: 38px;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #6b7280;
+      font-size: 17px;
+    }
+
+    .features,
+    .products,
+    .combos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      padding: 26px;
+      border-radius: 22px;
+      box-shadow: 0 10px 28px rgba(17, 24, 39, 0.08);
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card-icon {
+      font-size: 42px;
+      margin-bottom: 14px;
+    }
+
+    .card h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .card p {
+      color: #5f6b7a;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      color: #d97706;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .order-section {
+      background: #111827;
+      color: white;
+    }
+
+    .order-box {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      color: #111827;
+      padding: 34px;
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #f59e0b;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .checkboxes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 18px 0 24px;
+    }
+
+    .checkboxes label {
+      background: #fff7e6;
+      border: 1px solid #fde68a;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .checkboxes input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .custom-item-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .custom-items-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0 22px;
+    }
+
+    .item-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .remove-chip {
+      border: none;
+      background: #111827;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .location-box {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 14px;
+      margin: 18px 0;
+    }
+
+    .qr-section {
+      background: linear-gradient(135deg, #fff7e6, #ffffff);
+    }
+
+    .qr-box {
+      max-width: 780px;
+      margin: auto;
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(17, 24, 39, 0.1);
+      padding: 34px;
+      text-align: center;
+    }
+
+    .qr-controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .qr-image-wrap {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      background: #ffffff;
+      border: 2px dashed #f59e0b;
+      border-radius: 22px;
+      min-height: 260px;
+    }
+
+    #qrImage {
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
+    }
+
+    .qr-link-text {
+      margin-top: 14px;
+      color: #4b5563;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    .location-status {
+      color: #4b5563;
+      font-size: 14px;
+      margin-top: 8px;
+      word-break: break-word;
+    }
+
+    .small-note {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    footer {
+      background: #0b1120;
+      color: white;
+      text-align: center;
+      padding: 26px 8%;
+    }
+
+    footer p {
+      color: #d1d5db;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 55px;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      .features,
+      .products,
+      .combos {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      nav a {
+        margin: 0 7px;
+        font-size: 14px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .features,
+      .products,
+      .combos,
+      .form-grid,
+      .checkboxes,
+      .custom-item-row,
+      .qr-controls {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 55px 6%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">3AM <span>Morning Mart</span></div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#products">Items</a>
+      <a href="#combos">Combos</a>
+      <a href="#qr">QR Code</a>
+      <a href="#order">Order</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div>
+        <h1>Fresh Morning Items Delivered <span>Before Your Day Starts</span></h1>
+        <p>
+          Order milk, bread, eggs, fruits, tea, coffee, breakfast items and daily essentials at night. Get everything delivered fresh in the morning from your trusted local kirana store.
+        </p>
+        <div class="hero-buttons">
+          <a href="#order" class="btn btn-primary">Order Now</a>
+          <a href="#products" class="btn btn-secondary">View Items</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="emoji">🌅</div>
+        <h2>Morning Delivery</h2>
+        <p>Order tonight. Receive between 6 AM - 9 AM.</p>
+        <ul>
+          <li>✅ Fresh milk and bread</li>
+          <li>✅ Daily breakfast essentials</li>
+          <li>✅ Add extra items anytime</li>
+          <li>✅ Send live location on WhatsApp</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Why Choose Us?</h2>
+        <p>Simple, local and fast morning delivery for your daily needs.</p>
+      </div>
+
+      <div class="features">
+        <div class="card">
+          <div class="card-icon">🚚</div>
+          <h3>Early Delivery</h3>
+          <p>Get your essential items delivered early so your family never starts the day without basics.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛒</div>
+          <h3>Only Useful Items</h3>
+          <p>No confusion. We sell only morning-use items like milk, eggs, bread, fruits, tea and snacks.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📱</div>
+          <h3>Easy WhatsApp Order</h3>
+          <p>Select your items, add extra items, share location and send your order directly on WhatsApp.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="products">
+      <div class="section-title">
+        <h2>Morning Items</h2>
+        <p>High-demand products people need every morning.</p>
+      </div>
+
+      <div class="products">
+        <div class="card">
+          <div class="card-icon">🥛</div>
+          <h3>Milk & Curd</h3>
+          <p>Fresh milk, curd and paneer for daily home use.</p>
+          <div class="price">From ₹30</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🍞</div>
+          <h3>Bread & Butter</h3>
+          <p>Soft bread, butter, jam and peanut butter.</p>
+          <div class="price">From ₹25</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🥚</div>
+          <h3>Eggs</h3>
+          <p>Protein-rich eggs for breakfast and tiffin.</p>
+          <div class="price">From ₹7/item</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🍌</div>
+          <h3>Fruits</h3>
+          <p>Banana, apple, orange and seasonal fruits.</p>
+          <div class="price">From ₹40</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">☕</div>
+          <h3>Tea & Coffee</h3>
+          <p>Tea powder, coffee, sugar and instant sachets.</p>
+          <div class="price">From ₹10</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🍪</div>
+          <h3>Biscuits & Rusk</h3>
+          <p>Perfect with morning tea for family and guests.</p>
+          <div class="price">From ₹10</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="combos">
+      <div class="section-title">
+        <h2>Breakfast Combos</h2>
+        <p>Ready packs that make ordering simple and profitable.</p>
+      </div>
+
+      <div class="combos">
+        <div class="card">
+          <div class="card-icon">👨‍👩‍👧</div>
+          <h3>Family Pack</h3>
+          <p>Milk + Bread + Eggs + Butter</p>
+          <div class="price">₹199</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💼</div>
+          <h3>Office Pack</h3>
+          <p>Banana + Bread + Coffee + Peanut Butter</p>
+          <div class="price">₹149</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💪</div>
+          <h3>Healthy Pack</h3>
+          <p>Oats + Fruits + Curd + Nuts</p>
+          <div class="price">₹249</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="qr-section" id="qr">
+      <div class="section-title">
+        <h2>Website QR Code</h2>
+        <p>Customers can scan this QR code and open your morning delivery website directly.</p>
+      </div>
+
+      <div class="qr-box">
+        <h3>Scan to Open 3AM Morning Mart</h3>
+        <p class="small-note">After hosting the website, paste your live website link below and click Generate QR.</p>
+
+        <div class="qr-controls">
+          <input type="url" id="websiteUrl" placeholder="Paste your website link here, example: https://yourwebsite.com" />
+          <button class="btn btn-secondary" type="button" onclick="generateQRCode()">Generate QR</button>
+        </div>
+
+        <div class="qr-image-wrap">
+          <img id="qrImage" src="" alt="Website QR Code" />
+        </div>
+        <p class="qr-link-text" id="qrLinkText"></p>
+      </div>
+    </section>
+
+    <section class="order-section" id="order">
+      <div class="section-title">
+        <h2 style="color:white;">Place Your Morning Order</h2>
+        <p style="color:#d1d5db;">Select items, add extra items, share location and send your order on WhatsApp.</p>
+      </div>
+
+      <div class="order-box">
+        <div class="form-grid">
+          <input type="text" id="name" placeholder="Your Name" />
+          <input type="tel" id="phone" placeholder="Phone Number" />
+          <select id="time">
+            <option value="">Select Delivery Time</option>
+            <option value="6 AM - 7 AM">6 AM - 7 AM</option>
+            <option value="7 AM - 8 AM">7 AM - 8 AM</option>
+            <option value="8 AM - 9 AM">8 AM - 9 AM</option>
+          </select>
+          <input type="text" id="area" placeholder="Area / Locality" />
+        </div>
+
+        <textarea id="address" placeholder="Full Delivery Address"></textarea>
+
+        <h3 style="margin-top: 20px;">Choose Items</h3>
+        <div class="checkboxes">
+          <label><input type="checkbox" value="Milk"> Milk</label>
+          <label><input type="checkbox" value="Bread"> Bread</label>
+          <label><input type="checkbox" value="Eggs"> Eggs</label>
+          <label><input type="checkbox" value="Butter"> Butter</label>
+          <label><input type="checkbox" value="Fruits"> Fruits</label>
+          <label><input type="checkbox" value="Tea / Coffee"> Tea / Coffee</label>
+          <label><input type="checkbox" value="Biscuits / Rusk"> Biscuits / Rusk</label>
+          <label><input type="checkbox" value="Healthy Pack"> Healthy Pack</label>
+        </div>
+
+        <h3>Add More Items</h3>
+        <p class="small-note">Customer can type any item, add it to the order, and remove it before sending.</p>
+        <div class="custom-item-row">
+          <input type="text" id="customItem" placeholder="Example: Newspaper, Baby Diaper, Sugar, Medicine" />
+          <button class="btn btn-secondary" type="button" onclick="addCustomItem()">Add Item</button>
+        </div>
+        <div class="custom-items-list" id="customItemsList"></div>
+
+        <div class="location-box">
+          <button class="btn btn-outline" type="button" onclick="getCurrentLocation()">📍 Add Present Location</button>
+          <p class="location-status" id="locationStatus">Location not added yet.</p>
+          <p class="small-note">When the customer allows location access, a Google Maps link will be sent with the WhatsApp order.</p>
+        </div>
+
+        <textarea id="note" placeholder="Extra note: quantity, brand preference, subscription request, etc."></textarea>
+
+        <button class="btn btn-primary" style="margin-top: 18px; width: 100%;" onclick="sendOrder()">
+          Send Order on WhatsApp
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <h3>3AM Morning Mart</h3>
+    <p>Order tonight. Get fresh morning essentials tomorrow.</p>
+  </footer>
+
+  <script>
+    const customItems = [];
+    let locationLink = '';
+
+    function generateQRCode() {
+      const websiteUrlInput = document.getElementById('websiteUrl');
+      const qrImage = document.getElementById('qrImage');
+      const qrLinkText = document.getElementById('qrLinkText');
+
+      let websiteUrl = websiteUrlInput.value.trim();
+
+      if (!websiteUrl) {
+        websiteUrl = window.location.href;
+        websiteUrlInput.value = websiteUrl;
+      }
+
+      if (!websiteUrl.startsWith('http://') && !websiteUrl.startsWith('https://')) {
+        alert('Please enter a valid website URL starting with https:// or http://');
+        return;
+      }
+
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(websiteUrl)}`;
+      qrImage.src = qrApiUrl;
+      qrLinkText.textContent = `QR Code Link: ${websiteUrl}`;
+    }
+
+    window.addEventListener('load', function() {
+      generateQRCode();
+    });
+
+    function addCustomItem() {
+      const customItemInput = document.getElementById('customItem');
+      const itemName = customItemInput.value.trim();
+
+      if (!itemName) {
+        alert('Please type an item name first.');
+        return;
+      }
+
+      customItems.push(itemName);
+      customItemInput.value = '';
+      renderCustomItems();
+    }
+
+    function removeCustomItem(index) {
+      customItems.splice(index, 1);
+      renderCustomItems();
+    }
+
+    function renderCustomItems() {
+      const list = document.getElementById('customItemsList');
+      list.innerHTML = '';
+
+      customItems.forEach((item, index) => {
+        const chip = document.createElement('div');
+        chip.className = 'item-chip';
+        chip.innerHTML = `
+          <span>${item}</span>
+          <button class="remove-chip" type="button" onclick="removeCustomItem(${index})">×</button>
+        `;
+        list.appendChild(chip);
+      });
+    }
+
+    function getCurrentLocation() {
+      const status = document.getElementById('locationStatus');
+
+      if (!navigator.geolocation) {
+        status.textContent = 'Location is not supported by this browser. Please type full address manually.';
+        return;
+      }
+
+      status.textContent = 'Getting current location... Please allow location access.';
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          status.innerHTML = `Location added: <a href="${locationLink}" target="_blank">Open Map</a>`;
+        },
+        function() {
+          status.textContent = 'Location permission denied or unavailable. Customer can still send address manually.';
+        }
+      );
+    }
+
+    function sendOrder() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const time = document.getElementById('time').value;
+      const area = document.getElementById('area').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const note = document.getElementById('note').value.trim();
+
+      const selectedItems = Array.from(document.querySelectorAll('.checkboxes input:checked'))
+        .map(item => item.value);
+
+      const finalItems = [...selectedItems, ...customItems];
+
+      if (!name || !phone || !time || !area || !address) {
+        alert('Please fill your name, phone, delivery time, area and address.');
+        return;
+      }
+
+      if (finalItems.length === 0) {
+        alert('Please select or add at least one item.');
+        return;
+      }
+
+      const locationText = locationLink ? locationLink : 'Location not shared';
+
+      const message = `Hello 3AM Morning Mart,%0A%0AI want to place a morning order.%0A%0AName: ${name}%0APhone: ${phone}%0ADelivery Time: ${time}%0AArea: ${area}%0AAddress: ${address}%0APresent Location: ${locationText}%0A%0AItems: ${finalItems.join(', ')}%0A%0ANote: ${note || 'No extra note'}%0A%0APlease confirm my order.`;
+
+      // WhatsApp number: 7660865536. Country code 91 is added for India.
+      const whatsappNumber = '917660865536';
+      const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+      window.open(whatsappURL, '_blank');
+    }
+  </script>
+</body>
+</html>
