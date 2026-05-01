@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3AM Morning Mart - Fresh Morning Essentials</title>
+  <title>3AM Morning Mart - Morning Delivery Website</title>
+
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -43,7 +48,7 @@
     nav a {
       color: #ffffff;
       text-decoration: none;
-      margin-left: 22px;
+      margin-left: 18px;
       font-size: 15px;
       font-weight: 600;
     }
@@ -96,6 +101,7 @@
       cursor: pointer;
       border: none;
       font-size: 15px;
+      text-align: center;
     }
 
     .btn-primary {
@@ -105,12 +111,12 @@
 
     .btn-primary:hover {
       background: #d97706;
-      color: white;
+      color: #ffffff;
     }
 
     .btn-secondary {
       background: #111827;
-      color: white;
+      color: #ffffff;
     }
 
     .btn-secondary:hover {
@@ -118,7 +124,7 @@
     }
 
     .btn-outline {
-      background: white;
+      background: #ffffff;
       color: #111827;
       border: 1px solid #d1d5db;
     }
@@ -128,7 +134,7 @@
     }
 
     .hero-card {
-      background: white;
+      background: #ffffff;
       padding: 30px;
       border-radius: 28px;
       box-shadow: 0 20px 40px rgba(17, 24, 39, 0.13);
@@ -188,7 +194,7 @@
     }
 
     .card {
-      background: white;
+      background: #ffffff;
       padding: 26px;
       border-radius: 22px;
       box-shadow: 0 10px 28px rgba(17, 24, 39, 0.08);
@@ -221,15 +227,60 @@
       font-size: 18px;
     }
 
+    .qr-section {
+      background: linear-gradient(135deg, #fff7e6, #ffffff);
+    }
+
+    .qr-box {
+      max-width: 780px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(17, 24, 39, 0.1);
+      padding: 34px;
+      text-align: center;
+    }
+
+    .qr-controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .qr-image-wrap {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      background: #ffffff;
+      border: 2px dashed #f59e0b;
+      border-radius: 22px;
+      min-height: 260px;
+    }
+
+    #qrImage {
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
+    }
+
+    .qr-link-text {
+      margin-top: 14px;
+      color: #4b5563;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
     .order-section {
       background: #111827;
-      color: white;
+      color: #ffffff;
     }
 
     .order-box {
       max-width: 900px;
       margin: auto;
-      background: white;
+      background: #ffffff;
       color: #111827;
       padding: 34px;
       border-radius: 28px;
@@ -314,7 +365,7 @@
     .remove-chip {
       border: none;
       background: #111827;
-      color: white;
+      color: #ffffff;
       width: 22px;
       height: 22px;
       border-radius: 50%;
@@ -329,51 +380,6 @@
       border-radius: 14px;
       padding: 14px;
       margin: 18px 0;
-    }
-
-    .qr-section {
-      background: linear-gradient(135deg, #fff7e6, #ffffff);
-    }
-
-    .qr-box {
-      max-width: 780px;
-      margin: auto;
-      background: white;
-      border-radius: 28px;
-      box-shadow: 0 16px 40px rgba(17, 24, 39, 0.1);
-      padding: 34px;
-      text-align: center;
-    }
-
-    .qr-controls {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      margin: 22px 0;
-    }
-
-    .qr-image-wrap {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      padding: 18px;
-      background: #ffffff;
-      border: 2px dashed #f59e0b;
-      border-radius: 22px;
-      min-height: 260px;
-    }
-
-    #qrImage {
-      width: 220px;
-      height: 220px;
-      object-fit: contain;
-    }
-
-    .qr-link-text {
-      margin-top: 14px;
-      color: #4b5563;
-      font-size: 14px;
-      word-break: break-word;
     }
 
     .location-status {
@@ -391,7 +397,7 @@
 
     footer {
       background: #0b1120;
-      color: white;
+      color: #ffffff;
       text-align: center;
       padding: 26px 8%;
     }
@@ -423,8 +429,13 @@
         gap: 12px;
       }
 
+      nav {
+        text-align: center;
+      }
+
       nav a {
-        margin: 0 7px;
+        display: inline-block;
+        margin: 4px 7px;
         font-size: 14px;
       }
 
@@ -448,6 +459,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="logo">3AM <span>Morning Mart</span></div>
@@ -481,7 +493,7 @@
           <li>✅ Fresh milk and bread</li>
           <li>✅ Daily breakfast essentials</li>
           <li>✅ Add extra items anytime</li>
-          <li>✅ Send live location on WhatsApp</li>
+          <li>✅ Auto Google Maps location link</li>
         </ul>
       </div>
     </section>
@@ -505,8 +517,8 @@
         </div>
         <div class="card">
           <div class="card-icon">📱</div>
-          <h3>Easy WhatsApp Order</h3>
-          <p>Select your items, add extra items, share location and send your order directly on WhatsApp.</p>
+          <h3>WhatsApp Order</h3>
+          <p>Customer details, selected items and Google Maps location go directly to WhatsApp.</p>
         </div>
       </div>
     </section>
@@ -609,14 +621,14 @@
 
     <section class="order-section" id="order">
       <div class="section-title">
-        <h2 style="color:white;">Place Your Morning Order</h2>
-        <p style="color:#d1d5db;">Select items, add extra items, share location and send your order on WhatsApp.</p>
+        <h2 style="color:#ffffff;">Place Your Morning Order</h2>
+        <p style="color:#d1d5db;">Fill details, add items, auto-add location and send order on WhatsApp.</p>
       </div>
 
       <div class="order-box">
         <div class="form-grid">
-          <input type="text" id="name" placeholder="Your Name" />
-          <input type="tel" id="phone" placeholder="Phone Number" />
+          <input type="text" id="name" placeholder="Your Name" autocomplete="name" />
+          <input type="tel" id="phone" placeholder="Your Phone Number" autocomplete="tel" />
           <select id="time">
             <option value="">Select Delivery Time</option>
             <option value="6 AM - 7 AM">6 AM - 7 AM</option>
@@ -627,6 +639,13 @@
         </div>
 
         <textarea id="address" placeholder="Full Delivery Address"></textarea>
+
+        <div class="location-box">
+          <button class="btn btn-outline" type="button" onclick="getCurrentLocation(true)">📍 Auto Fill Live Location from Google Maps</button>
+          <input type="text" id="locationInput" placeholder="Live location will appear here" readonly style="margin-top: 12px;" />
+          <p class="location-status" id="locationStatus">Location not added yet. Click the button and allow location permission.</p>
+          <p class="small-note">Note: WhatsApp cannot send real-time live tracking from a website. This sends the customer's current Google Maps location link.</p>
+        </div>
 
         <h3 style="margin-top: 20px;">Choose Items</h3>
         <div class="checkboxes">
@@ -641,18 +660,12 @@
         </div>
 
         <h3>Add More Items</h3>
-        <p class="small-note">Customer can type any item, add it to the order, and remove it before sending.</p>
+        <p class="small-note">Type any extra item. You can remove it before sending.</p>
         <div class="custom-item-row">
           <input type="text" id="customItem" placeholder="Example: Newspaper, Baby Diaper, Sugar, Medicine" />
           <button class="btn btn-secondary" type="button" onclick="addCustomItem()">Add Item</button>
         </div>
         <div class="custom-items-list" id="customItemsList"></div>
-
-        <div class="location-box">
-          <button class="btn btn-outline" type="button" onclick="getCurrentLocation()">📍 Add Present Location</button>
-          <p class="location-status" id="locationStatus">Location not added yet.</p>
-          <p class="small-note">When the customer allows location access, a Google Maps link will be sent with the WhatsApp order.</p>
-        </div>
 
         <textarea id="note" placeholder="Extra note: quantity, brand preference, subscription request, etc."></textarea>
 
@@ -669,8 +682,14 @@
   </footer>
 
   <script>
+    // Your WhatsApp number.
+    // You typed: 766086536. For India, 91 is added before the number.
+    // If your correct number is 7660865536, change this to: 917660865536
+    const SHOP_WHATSAPP_NUMBER = '91766086536';
+
     const customItems = [];
     let locationLink = '';
+    let locationCoordinates = '';
 
     function generateQRCode() {
       const websiteUrlInput = document.getElementById('websiteUrl');
@@ -693,10 +712,6 @@
       qrImage.src = qrApiUrl;
       qrLinkText.textContent = `QR Code Link: ${websiteUrl}`;
     }
-
-    window.addEventListener('load', function() {
-      generateQRCode();
-    });
 
     function addCustomItem() {
       const customItemInput = document.getElementById('customItem');
@@ -732,27 +747,83 @@
       });
     }
 
-    function getCurrentLocation() {
+    function getCurrentLocation(showAlert = false) {
       const status = document.getElementById('locationStatus');
+      const locationInput = document.getElementById('locationInput');
 
       if (!navigator.geolocation) {
         status.textContent = 'Location is not supported by this browser. Please type full address manually.';
         return;
       }
 
-      status.textContent = 'Getting current location... Please allow location access.';
+      status.textContent = 'Getting live location... Please allow location permission.';
 
       navigator.geolocation.getCurrentPosition(
         function(position) {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
+
+          locationCoordinates = `${latitude}, ${longitude}`;
           locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          status.innerHTML = `Location added: <a href="${locationLink}" target="_blank">Open Map</a>`;
+
+          locationInput.value = locationLink;
+          status.innerHTML = `Location added successfully: <a href="${locationLink}" target="_blank">Open Google Maps</a>`;
+
+          const addressBox = document.getElementById('address');
+          if (!addressBox.value.includes('Google Maps Location')) {
+            addressBox.value = `${addressBox.value}\nGoogle Maps Location: ${locationLink}`.trim();
+          }
+
+          if (showAlert) {
+            alert('Live location added successfully.');
+          }
         },
-        function() {
-          status.textContent = 'Location permission denied or unavailable. Customer can still send address manually.';
+        function(error) {
+          let errorMessage = 'Location permission denied or unavailable. Please type full address manually.';
+
+          if (error.code === 1) {
+            errorMessage = 'Location permission denied. Please allow location access or type address manually.';
+          } else if (error.code === 2) {
+            errorMessage = 'Location unavailable. Please check GPS/location settings.';
+          } else if (error.code === 3) {
+            errorMessage = 'Location request timed out. Please try again.';
+          }
+
+          status.textContent = errorMessage;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 0
         }
       );
+    }
+
+    function saveCustomerDetails() {
+      const details = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        area: document.getElementById('area').value.trim(),
+        address: document.getElementById('address').value.trim()
+      };
+
+      localStorage.setItem('morningMartCustomerDetails', JSON.stringify(details));
+    }
+
+    function autoFillSavedCustomerDetails() {
+      const savedDetails = localStorage.getItem('morningMartCustomerDetails');
+
+      if (!savedDetails) return;
+
+      try {
+        const details = JSON.parse(savedDetails);
+        document.getElementById('name').value = details.name || '';
+        document.getElementById('phone').value = details.phone || '';
+        document.getElementById('area').value = details.area || '';
+        document.getElementById('address').value = details.address || '';
+      } catch (error) {
+        console.log('No saved customer details found.');
+      }
     }
 
     function sendOrder() {
@@ -769,7 +840,7 @@
       const finalItems = [...selectedItems, ...customItems];
 
       if (!name || !phone || !time || !area || !address) {
-        alert('Please fill your name, phone, delivery time, area and address.');
+        alert('Please fill name, phone number, delivery time, area and address.');
         return;
       }
 
@@ -778,15 +849,38 @@
         return;
       }
 
+      saveCustomerDetails();
+
       const locationText = locationLink ? locationLink : 'Location not shared';
+      const coordinateText = locationCoordinates ? locationCoordinates : 'Coordinates not available';
 
-      const message = `Hello 3AM Morning Mart,%0A%0AI want to place a morning order.%0A%0AName: ${name}%0APhone: ${phone}%0ADelivery Time: ${time}%0AArea: ${area}%0AAddress: ${address}%0APresent Location: ${locationText}%0A%0AItems: ${finalItems.join(', ')}%0A%0ANote: ${note || 'No extra note'}%0A%0APlease confirm my order.`;
+      const message =
+        `Hello 3AM Morning Mart,%0A%0A` +
+        `I want to place a morning order.%0A%0A` +
+        `Customer Details:%0A` +
+        `Name: ${encodeURIComponent(name)}%0A` +
+        `Phone: ${encodeURIComponent(phone)}%0A` +
+        `Delivery Time: ${encodeURIComponent(time)}%0A` +
+        `Area: ${encodeURIComponent(area)}%0A` +
+        `Address: ${encodeURIComponent(address)}%0A%0A` +
+        `Live Google Maps Location:%0A${encodeURIComponent(locationText)}%0A` +
+        `Coordinates: ${encodeURIComponent(coordinateText)}%0A%0A` +
+        `Items:%0A${encodeURIComponent(finalItems.join(', '))}%0A%0A` +
+        `Note: ${encodeURIComponent(note || 'No extra note')}%0A%0A` +
+        `Please confirm my order.`;
 
-      // WhatsApp number: 7660865536. Country code 91 is added for India.
-      const whatsappNumber = '917660856536';
-      const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+      const whatsappURL = `https://wa.me/${SHOP_WHATSAPP_NUMBER}?text=${message}`;
       window.open(whatsappURL, '_blank');
     }
+
+    window.addEventListener('load', function() {
+      generateQRCode();
+      autoFillSavedCustomerDetails();
+
+      // This tries to get location automatically.
+      // Browser will ask the customer for permission.
+      getCurrentLocation(false);
+    });
   </script>
 </body>
 </html>
