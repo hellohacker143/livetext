@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sai Food Store</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    /* HEADER */
+
+    .header {
+      background: white;
+      padding: 15px 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 10px #ddd;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e23744;
+    }
+
+    .cart-btn {
+      background: #e23744;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* HERO */
+
+    .hero {
+      background: linear-gradient(
+        rgba(0,0,0,.55),
+        rgba(0,0,0,.55)
+      ),
+      url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80");
+
+      background-size: cover;
+      background-position: center;
+
+      height: 250px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      margin: 0;
+    }
+
+    .hero p {
+      font-size: 17px;
+    }
+
+    /* CUSTOMER */
+
+    .customer {
+      max-width: 1100px;
+      margin: 25px auto 10px;
+      padding: 0 15px;
+    }
+
+    .customer input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    /* PRODUCTS */
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .title {
+      margin: 15px 0;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px #ddd;
+    }
+
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product h3 {
+      margin: 0 0 8px;
+    }
+
+    .price {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 10px;
+      background: #e23744;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* CART */
+
+    .cart {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px #ddd;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 12px 0;
+    }
+
+    .quantity button {
+      border: none;
+      background: #eee;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .quantity span {
+      margin: 0 8px;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 23px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .print-btn {
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      border: none;
+      background: #111;
+      color: white;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    #message {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    /* MOBILE */
+
+    @media(max-width: 700px) {
+
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .product img {
+        height: 130px;
+      }
+
+      .product-info {
+        padding: 10px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+    }
+
+    @media(max-width: 450px) {
+
+      .products {
+        grid-template-columns: 1fr;
+      }
+
+      .product img {
+        height: 190px;
+      }
+
+      .header {
+        padding: 12px;
+      }
+
+    }
+
+    /* PRINT */
+
+    @media print {
+
+      body * {
+        visibility: hidden;
+      }
+
+      .cart,
+      .cart * {
+        visibility: visible;
+      }
+
+      .cart {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+      }
+
+      .print-btn {
+        display: none;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+  <div class="logo">
+    🍔 Sai Food Store
+  </div>
+
+  <button class="cart-btn" onclick="goCart()">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </button>
+
+</div>
+
+
+<!-- HERO -->
+
+<div class="hero">
+
+  <div>
+    <h1>Delicious Food</h1>
+    <p>Fresh food delivered to your table</p>
+  </div>
+
+</div>
+
+
+<!-- CUSTOMER -->
+
+<div class="customer">
+
+  <input
+    type="text"
+    id="customerName"
+    placeholder="Enter customer name"
+  >
+
+</div>
+
+
+<!-- PRODUCTS -->
+
+<div class="container">
+
+  <h2 class="title">Popular Products</h2>
+
+  <div class="products">
+
+    <!-- PRODUCT 1 -->
+
+    <div class="product">
+
+      <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80">
+
+      <div class="product-info">
+
+        <h3>Pizza</h3>
+
+        <div class="price">₹199</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Pizza',199)">
+          ADD
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT 2 -->
+
+    <div class="product">
+
+      <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80">
+
+      <div class="product-info">
+
+        <h3>Burger</h3>
+
+        <div class="price">₹149</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Burger',149)">
+          ADD
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT 3 -->
+
+    <div class="product">
+
+      <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=80">
+
+      <div class="product-info">
+
+        <h3>Healthy Bowl</h3>
+
+        <div class="price">₹179</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Healthy Bowl',179)">
+          ADD
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT 4 -->
+
+    <div class="product">
+
+      <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=80">
+
+      <div class="product-info">
+
+        <h3>Pasta</h3>
+
+        <div class="price">₹159</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Pasta',159)">
+          ADD
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT 5 -->
+
+    <div class="product">
+
+      <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80">
+
+      <div class="product-info">
+
+        <h3>Samosa</h3>
+
+        <div class="price">₹60</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Samosa',60)">
+          ADD
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- CART -->
+
+<div class="cart" id="cart">
+
+  <h2>🛒 Your Order</h2>
+
+  <div id="cartItems">
+    No items added.
+  </div>
+
+  <div class="total">
+    Total: ₹<span id="total">0</span>
+  </div>
+
+  <button class="print-btn" onclick="printBill()">
+    🖨️ PRINT BILL
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+
+<script>
+
+  var cart = [];
+
+
+  function addToCart(name, price) {
+
+    var existing = cart.find(function(item) {
+      return item.name === name;
+    });
+
+    if (existing) {
+
+      existing.qty++;
+
+    } else {
+
+      cart.push({
+        name: name,
+        price: price,
+        qty: 1
+      });
+
+    }
+
+    displayCart();
+
+  }
+
+
+  function changeQty(index, amount) {
+
+    cart[index].qty += amount;
+
+    if (cart[index].qty <= 0) {
+      cart.splice(index, 1);
+    }
+
+    displayCart();
+
+  }
+
+
+  function displayCart() {
+
+    var box = document.getElementById("cartItems");
+
+    var total = 0;
+
+    var count = 0;
+
+    if (cart.length === 0) {
+
+      box.innerHTML = "No items added.";
+
+    } else {
+
+      box.innerHTML = "";
+
+      cart.forEach(function(item, index) {
+
+        var itemTotal = item.price * item.qty;
+
+        total += itemTotal;
+
+        count += item.qty;
+
+        box.innerHTML += `
+
+          <div class="cart-item">
+
+            <div>
+              <b>${item.name}</b>
+              <br>
+              ₹${item.price} × ${item.qty}
+            </div>
+
+            <div class="quantity">
+
+              <button onclick="changeQty(${index},-1)">
+                −
+              </button>
+
+              <span>${item.qty}</span>
+
+              <button onclick="changeQty(${index},1)">
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+    document.getElementById("total").innerText = total;
+
+    document.getElementById("cartCount").innerText = count;
+
+  }
+
+
+  function goCart() {
+
+    document.getElementById("cart")
+      .scrollIntoView({
+        behavior: "smooth"
+      });
+
+  }
+
+
+  function printBill() {
+
+    var customer =
+      document.getElementById("customerName").value.trim();
+
+    if (customer === "") {
+
+      alert("Please enter customer name");
+
+      return;
+
+    }
+
+    if (cart.length === 0) {
+
+      alert("Please add products");
+
+      return;
+
+    }
+
+
+    var total = 0;
+
+    var products = [];
+
+
+    cart.forEach(function(item) {
+
+      var itemTotal = item.price * item.qty;
+
+      total += itemTotal;
+
+      products.push({
+
+        name: item.name,
+
+        qty: item.qty,
+
+        price: item.price,
+
+        total: itemTotal
+
+      });
+
+    });
+
+
+    var order = {
+
+      customerName: customer,
+
+      products: products,
+
+      total: total
+
+    };
+
+
+    // SAVE TO GOOGLE SHEET
+
+    google.script.run
+
+      .withSuccessHandler(function(response) {
+
+        document.getElementById("message")
+          .innerText = response;
+
+        // OPEN PRINT WINDOW
+
+        window.print();
+
+        // Clear order after printing
+
+        setTimeout(function() {
+
+          cart = [];
+
+          document.getElementById("customerName").value = "";
+
+          displayCart();
+
+        }, 1000);
+
+      })
+
+      .withFailureHandler(function(error) {
+
+        alert("Error: " + error.message);
+
+      })
+
+      .saveOrder(order);
+
+  }
+
+
+  displayCart();
+
+</script>
+
+</body>
+</html>
