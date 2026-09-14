@@ -4,7 +4,7 @@ function doGet() {
 }
 
 function saveName(name) {
-  var doc = DocumentApp.openById("AKfycbwLVPlBSJO-crzAGZh_UvEWWNdj3lh5hf0dVuxBghqcrvzy-reE5QVeFkGy3cMrArqO");
+  var doc = DocumentApp.openById("AKfycbw-UsRuCt-EuSvArJsDXyJXj0Fbn02iZF5PRt9lNu4z92fNNtAWlQMfSOe2jpHQ0uLJ");
 
   var body = doc.getBody();
 
