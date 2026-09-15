@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Food Order</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+    color:#222;
+}
+
+header{
+    background:#25D366;
+    color:white;
+    padding:18px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:12px;
+    box-shadow:0 2px 8px #ddd;
+}
+
+.product{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.product-info h3{
+    font-size:17px;
+    margin-bottom:5px;
+}
+
+.price{
+    color:#555;
+}
+
+.qty{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.qty button{
+    width:34px;
+    height:34px;
+    border:0;
+    border-radius:50%;
+    background:#25D366;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.qty span{
+    font-weight:bold;
+    min-width:20px;
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin-top:8px;
+    font-size:16px;
+}
+
+.location-btn{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:8px;
+    background:#1877f2;
+    color:white;
+    font-size:16px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+.location-status{
+    margin-top:10px;
+    font-size:14px;
+}
+
+.total{
+    font-size:22px;
+    font-weight:bold;
+    text-align:right;
+}
+
+.order-btn{
+    width:100%;
+    padding:16px;
+    border:0;
+    border-radius:10px;
+    background:#25D366;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.order-btn:disabled{
+    background:#aaa;
+}
+
+.small{
+    color:#666;
+    font-size:13px;
+    margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🍴 Food Order</h2>
+    <p>Order through WhatsApp</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h3>Customer Details</h3>
+
+        <input
+            type="text"
+            id="customerName"
+            placeholder="Enter customer name"
+        >
+
+        <button class="location-btn" onclick="getLocation()">
+            📍 Get Live Location
+        </button>
+
+        <div class="location-status" id="locationStatus">
+            Location not selected
+        </div>
+    </div>
+
+    <div id="products"></div>
+
+    <div class="card">
+        <div class="total">
+            Total: ₹<span id="total">0</span>
+        </div>
+
+        <button
+            class="order-btn"
+            id="orderBtn"
+            onclick="placeOrder()"
+            disabled
+        >
+            💬 Place Order on WhatsApp
+        </button>
+
+        <p class="small">
+            Get your location first, then place the order.
+        </p>
+    </div>
+
+</div>
+
+<script>
+
+/* =========================
+   PRODUCTS
+========================= */
+
+const products = [
+    {name:"5 Star", price:10},
+    {name:"Dairy Milk", price:20},
+    {name:"Lays", price:20},
+    {name:"Biscuit", price:10},
+    {name:"Cool Drink", price:30}
+];
+
+let quantities = [0,0,0,0,0];
+
+let latitude = null;
+let longitude = null;
+
+
+/* =========================
+   SHOW PRODUCTS
+========================= */
+
+function showProducts(){
+
+    const box = document.getElementById("products");
+
+    box.innerHTML = "";
+
+    products.forEach((product,index)=>{
+
+        box.innerHTML += `
+
+        <div class="card">
+
+            <div class="product">
+
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <div class="price">
+                        ₹${product.price}
+                    </div>
+                </div>
+
+                <div class="qty">
+
+                    <button onclick="changeQty(${index},-1)">
+                        −
+                    </button>
+
+                    <span id="qty-${index}">
+                        0
+                    </span>
+
+                    <button onclick="changeQty(${index},1)">
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================
+   QUANTITY
+========================= */
+
+function changeQty(index,value){
+
+    quantities[index] += value;
+
+    if(quantities[index] < 0){
+        quantities[index] = 0;
+    }
+
+    document.getElementById(`qty-${index}`).innerText =
+        quantities[index];
+
+    calculateTotal();
+}
+
+
+/* =========================
+   TOTAL
+========================= */
+
+function calculateTotal(){
+
+    let total = 0;
+
+    products.forEach((product,index)=>{
+
+        total += product.price * quantities[index];
+
+    });
+
+    document.getElementById("total").innerText = total;
+
+}
+
+
+/* =========================
+   GET LIVE LOCATION
+========================= */
+
+function getLocation(){
+
+    const status =
+        document.getElementById("locationStatus");
+
+    if(!navigator.geolocation){
+
+        status.innerText =
+            "❌ Location is not supported by this browser.";
+
+        return;
+    }
+
+    status.innerText =
+        "📍 Getting your live location...";
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position){
+
+            latitude =
+                position.coords.latitude;
+
+            longitude =
+                position.coords.longitude;
+
+            status.innerHTML = `
+                ✅ Location received<br>
+                <small>
+                ${latitude.toFixed(6)},
+                ${longitude.toFixed(6)}
+                </small>
+            `;
+
+            document.getElementById("orderBtn")
+                .disabled = false;
+
+        },
+
+        function(error){
+
+            status.innerText =
+                "❌ Please allow location permission.";
+
+        },
+
+        {
+            enableHighAccuracy:true,
+            timeout:10000,
+            maximumAge:0
+        }
+
+    );
+
+}
+
+
+/* =========================
+   WHATSAPP ORDER
+========================= */
+
+function placeOrder(){
+
+    const name =
+        document.getElementById("customerName")
+        .value.trim();
+
+    if(!name){
+
+        alert("Please enter customer name.");
+
+        return;
+    }
+
+    if(latitude === null){
+
+        alert("Please get your live location first.");
+
+        return;
+    }
+
+    let message =
+        "🍴 *NEW FOOD ORDER*%0A%0A";
+
+    message +=
+        "👤 *Customer:* " + name + "%0A%0A";
+
+    message +=
+        "🛒 *ORDER ITEMS*%0A";
+
+    let hasItems = false;
+
+    products.forEach((product,index)=>{
+
+        if(quantities[index] > 0){
+
+            hasItems = true;
+
+            const itemTotal =
+                product.price * quantities[index];
+
+            message +=
+                "• " +
+                product.name +
+                " × " +
+                quantities[index] +
+                " = ₹" +
+                itemTotal +
+                "%0A";
+        }
+
+    });
+
+
+    if(!hasItems){
+
+        alert("Please select at least one product.");
+
+        return;
+    }
+
+
+    const total =
+        document.getElementById("total").innerText;
+
+
+    message +=
+        "%0A💰 *TOTAL: ₹" +
+        total +
+        "*%0A%0A";
+
+
+    const mapsLink =
+        "https://www.google.com/maps?q=" +
+        latitude +
+        "," +
+        longitude;
+
+
+    message +=
+        "📍 *Customer Location*%0A" +
+        mapsLink +
+        "%0A%0A";
+
+    message +=
+        "Please confirm my order.";
+
+
+    /*
+       CHANGE THIS NUMBER
+       Country code + number
+       India = 91
+    */
+
+    const whatsappNumber =
+        "917660856536";
+
+
+    const whatsappURL =
+        "https://wa.me/" +
+        whatsappNumber +
+        "?text=" +
+        message;
+
+
+    window.open(
+        whatsappURL,
+        "_blank"
+    );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+showProducts();
+
+calculateTotal();
+
+</script>
+
+</body>
+</html>
